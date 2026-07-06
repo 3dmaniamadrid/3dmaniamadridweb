@@ -763,8 +763,6 @@
                 autocomplete="off"
                 novalidate
               >
-                <input type="hidden" name="access_key" value="eb6c718a-45fc-4c89-82b9-d42be0db88e9">
-
                 <div class="form-field form-field--file" id="field-archivo">
                   <label class="form-label" for="archivo">Archivo .STL</label>
                   <div class="form-file">
@@ -1050,7 +1048,8 @@
       var errorEl = document.getElementById('form-error');
       var validationSummary = document.getElementById('form-validation-summary');
       var telefonoInput = document.getElementById('telefono');
-      var web3formsUrl = 'https://api.web3forms.com/submit';
+      var appsScriptUrl = 'https://script.google.com/macros/s/AKfycbxZOIRrGZ_aTgWo9s5_fGvJmPzAlBlWHEKPKASl0pMv9e02-ARYoMndBzyVxyK7hHC2Lw/exec';
+      var maxFileSize = 10 * 1024 * 1024;
 
       function isValidStl(file) {
         if (!file) return false;
@@ -1109,6 +1108,10 @@
           setFieldError('field-archivo', 'error-archivo', true, 'El archivo debe tener extensión .STL.');
           missing.push('archivo .STL válido');
           firstErrorField = firstErrorField || document.getElementById('field-archivo');
+        } else if (file.size > maxFileSize) {
+          setFieldError('field-archivo', 'error-archivo', true, 'El archivo no puede superar los 10 MB.');
+          missing.push('archivo de menos de 10 MB');
+          firstErrorField = firstErrorField || document.getElementById('field-archivo');
         }
 
         if (!nombre) {
@@ -1156,6 +1159,15 @@
         return true;
       }
 
+      function readFileAsDataURL(file) {
+        return new Promise(function (resolve, reject) {
+          var reader = new FileReader();
+          reader.onload = function () { resolve(reader.result); };
+          reader.onerror = function () { reject(new Error('Error al leer el archivo')); };
+          reader.readAsDataURL(file);
+        });
+      }
+
       ['input', 'change'].forEach(function (evt) {
         form.addEventListener(evt, function (e) {
           if (!e.target.closest('.form-field')) return;
@@ -1170,29 +1182,32 @@
 
         if (!validateForm()) return;
 
+        var file = fileInput.files[0];
         submitBtn.disabled = true;
         submitBtn.textContent = 'Enviando…';
 
-        var formData = new FormData(form);
-        formData.set('telefono', normalizePhone(telefonoInput.value));
+        readFileAsDataURL(file)
+          .then(function (dataUrl) {
+            var formData = new FormData();
+            formData.append('nombre', document.getElementById('nombre').value.trim());
+            formData.append('email', document.getElementById('email').value.trim());
+            formData.append('movil', normalizePhone(telefonoInput.value));
+            formData.append('comentarios', document.getElementById('comentarios').value.trim());
+            formData.append('archivo_nombre', file.name);
+            formData.append('archivo_base64', dataUrl);
 
-        fetch(web3formsUrl, {
-          method: 'POST',
-          body: formData
-        })
-          .then(function (response) {
-            return response.json();
+            return fetch(appsScriptUrl, {
+              method: 'POST',
+              body: formData,
+              mode: 'no-cors'
+            });
           })
-          .then(function (data) {
-            if (data.success) {
-              form.reset();
-              fileNameEl.textContent = '';
-              clearAllErrors();
-              successEl.hidden = false;
-              successEl.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'nearest' });
-            } else {
-              throw new Error(data.message || 'Error al enviar');
-            }
+          .then(function () {
+            form.reset();
+            fileNameEl.textContent = '';
+            clearAllErrors();
+            successEl.hidden = false;
+            successEl.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'nearest' });
           })
           .catch(function () {
             errorEl.hidden = false;
