@@ -242,21 +242,19 @@
   .step-body a { color: var(--orange-dark); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
 
   /* ================= ADVANTAGES (dark) ================= */
-  .advantages { background: var(--navy-deep); color: var(--white); padding: clamp(56px,8vw,90px) 0; }
-  .adv-head { margin-bottom: clamp(36px,5vw,54px); }
-  .adv-head h2 { font-family: var(--display); font-weight: 700; font-size: clamp(1.5rem, 2.6vw, 2rem); max-width: 24ch; }
+  .advantages { background: var(--navy-deep); color: var(--white); padding: clamp(72px, 11vw, 120px) 0; }
   .adv-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--hairline-dark); }
   @media (max-width: 800px) { .adv-grid { grid-template-columns: 1fr; } }
-  .adv-item { padding: 30px clamp(18px, 3vw, 34px); border-right: 1px solid var(--hairline-dark); transition: background 0.3s ease; }
+  .adv-item { padding: clamp(40px, 5.5vw, 56px) clamp(24px, 4vw, 48px); border-right: 1px solid var(--hairline-dark); transition: background 0.3s ease; }
   .adv-item:hover { background: rgba(255,255,255,0.03); }
   .adv-item:last-child { border-right: none; }
   @media (max-width: 800px) {
     .adv-item { border-right: none; border-bottom: 1px solid var(--hairline-dark); }
     .adv-item:last-child { border-bottom: none; }
   }
-  .adv-item svg { width: 26px; height: 26px; stroke: var(--cyan); margin-bottom: 18px; }
-  .adv-item .label { font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cyan); margin-bottom: 10px; }
-  .adv-item p { color: rgba(255,255,255,0.78); font-size: 0.98rem; }
+  .adv-item svg { width: 36px; height: 36px; stroke: var(--cyan); margin-bottom: 22px; }
+  .adv-item .label { font-family: var(--mono); font-size: clamp(0.78rem, 1.5vw, 0.86rem); letter-spacing: 0.1em; text-transform: uppercase; color: var(--cyan); margin-bottom: 14px; }
+  .adv-item p { color: rgba(255,255,255,0.78); font-size: clamp(1rem, 1.8vw, 1.1rem); line-height: 1.65; }
 
   /* ================= FOOTER ================= */
   footer { background: var(--navy-deep); color: var(--white); border-top: 1px solid var(--hairline-dark); padding: 44px 0 26px; }
@@ -396,10 +394,6 @@
 
 <section class="advantages" id="ventajas">
   <div class="wrap">
-    <div class="adv-head reveal">
-      <div class="eyebrow on-dark">Por qué 3D Mania Madrid</div>
-      <h2>Calidad, asesoramiento y rapidez en cada pieza</h2>
-    </div>
     <div class="adv-grid reveal">
       <div class="adv-item">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
