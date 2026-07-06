@@ -18,7 +18,9 @@
       --cyan: #7FB8D9;
       --orange: #E15A2C;
       --orange-hover: #C0491F;
-      --graphite: #5B6472;
+      --graphite: #6E7888;
+      --graphite-soft: #8791A0;
+      --cyan-deep: #527D9A;
       --ink: #182036;
       --warm-white: #FBFAF7;
       --max-w: 46rem;
@@ -67,10 +69,21 @@
       inset: 0 0 auto 0;
       z-index: 200;
       height: var(--nav-h);
-      background: rgba(15, 25, 46, 0.92);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(127, 184, 217, 0.12);
+      background: rgba(15, 25, 46, 0.78);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(127, 184, 217, 0.1);
+      transition:
+        background 0.35s var(--ease-out),
+        backdrop-filter 0.35s var(--ease-out),
+        border-color 0.35s var(--ease-out);
+    }
+
+    .site-nav.is-scrolled {
+      background: rgba(15, 25, 46, 0.96);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom-color: rgba(127, 184, 217, 0.2);
     }
 
     .site-nav__inner {
@@ -144,39 +157,49 @@
 
     /* ── Brief intro ────────────────────────────────────────── */
     .intro {
-      padding-top: calc(var(--nav-h) + clamp(2.5rem, 6vw, 4rem));
-      padding-bottom: clamp(2.75rem, 5.5vw, 4rem);
-      text-align: center;
+      padding-top: calc(var(--nav-h) + clamp(2.75rem, 6.5vw, 4.25rem));
+      padding-bottom: clamp(3.25rem, 7vw, 5rem);
+      text-align: left;
     }
 
     .intro__logo {
       display: flex;
-      justify-content: center;
-      margin-bottom: clamp(1.35rem, 3.75vw, 1.875rem);
+      justify-content: flex-start;
+      margin-bottom: clamp(1.5rem, 4vw, 2.125rem);
       line-height: 0;
     }
 
     .intro__logo img {
       display: block;
-      height: clamp(4.25rem, 12.5vw, 6rem);
+      height: clamp(4rem, 11.5vw, 5.5rem);
       width: auto;
-      max-width: min(19rem, 92vw);
+      max-width: min(17rem, 85vw);
       object-fit: contain;
     }
 
     .intro__title {
       font-family: var(--font-display);
-      font-size: clamp(1.75rem, 5vw, 2.75rem);
+      font-size: clamp(1.5rem, 4.2vw, 2.35rem);
       font-weight: 700;
-      letter-spacing: -0.03em;
-      line-height: 1.1;
-      color: var(--ink);
+      letter-spacing: -0.042em;
+      line-height: 1.12;
       margin-bottom: 0;
+      max-width: 16ch;
+    }
+
+    .intro__title-primary {
+      color: var(--navy);
+    }
+
+    .intro__title-secondary {
+      color: var(--cyan-deep);
+      font-weight: 600;
     }
 
     /* ── Process ────────────────────────────────────────────── */
     .section-proceso {
       padding-bottom: var(--pad-y);
+      margin-top: -0.5rem;
     }
 
     .process-list {
@@ -189,6 +212,11 @@
       gap: 0 1.5rem;
       padding-bottom: clamp(2.75rem, 5vw, 3.5rem);
       position: relative;
+      transition: opacity 0.25s ease;
+    }
+
+    .process-step:first-child {
+      padding-bottom: clamp(3.25rem, 6.5vw, 4.25rem);
     }
 
     .process-step:last-child { padding-bottom: 0; }
@@ -201,7 +229,7 @@
       bottom: 0;
       width: 1px;
       background: var(--navy);
-      opacity: 0.12;
+      opacity: 0.08;
     }
 
     .process-step__num-col {
@@ -219,22 +247,43 @@
       width: 44px;
       height: 44px;
       flex-shrink: 0;
-      background: var(--navy);
+      background: rgba(22, 35, 63, 0.04);
+      border: 1px solid rgba(22, 35, 63, 0.08);
       margin-bottom: 0.5rem;
+      transition:
+        background 0.3s var(--ease-out),
+        border-color 0.3s var(--ease-out),
+        transform 0.3s var(--ease-out);
+    }
+
+    .process-step:hover .process-step__icon {
+      background: rgba(127, 184, 217, 0.1);
+      border-color: rgba(127, 184, 217, 0.35);
+      transform: translateY(-1px);
     }
 
     .process-step__icon svg {
       width: 24px;
       height: 24px;
       display: block;
+      transition: transform 0.3s var(--ease-out);
+    }
+
+    .process-step:hover .process-step__icon svg {
+      transform: scale(1.04);
     }
 
     .process-step__icon * {
-      stroke: var(--cyan);
+      stroke: var(--navy);
       stroke-width: 1.5;
       fill: none;
       stroke-linecap: round;
       stroke-linejoin: round;
+      transition: stroke 0.3s ease;
+    }
+
+    .process-step:hover .process-step__icon *:not(.icon-accent) {
+      stroke: var(--cyan-deep);
     }
 
     .process-step__icon .icon-accent {
@@ -249,13 +298,18 @@
       color: var(--navy);
       background: var(--paper);
       padding-block: 0.2rem;
+      transition: color 0.3s ease;
+    }
+
+    .process-step:hover .process-step__num {
+      color: var(--cyan-deep);
     }
 
     .process-step__tick {
       width: 1px;
       height: 8px;
       background: var(--navy);
-      opacity: 0.3;
+      opacity: 0.2;
       margin-top: 0.35rem;
     }
 
@@ -296,10 +350,10 @@
 
     /* ── Upload form ────────────────────────────────────────── */
     .upload-form {
-      margin-top: 1.5rem;
+      margin-top: 1.75rem;
       background: #fff;
-      border: 1px solid rgba(22, 35, 63, 0.1);
-      box-shadow: 0 1px 3px rgba(22, 35, 63, 0.04), 0 12px 40px rgba(22, 35, 63, 0.07);
+      border: 1px solid rgba(22, 35, 63, 0.08);
+      box-shadow: 0 1px 2px rgba(22, 35, 63, 0.03), 0 8px 32px rgba(22, 35, 63, 0.05);
       padding: clamp(1.25rem, 4vw, 2rem);
     }
 
@@ -508,7 +562,7 @@
     /* ── Benefits ───────────────────────────────────────────── */
     .section-ventajas {
       padding-block: var(--pad-y);
-      border-top: 1px solid rgba(22, 35, 63, 0.08);
+      border-top: 1px solid rgba(22, 35, 63, 0.06);
     }
 
     .ventajas-grid {
@@ -535,11 +589,18 @@
     }
 
     .ventaja__icon * {
-      stroke: var(--cyan);
+      stroke: var(--navy);
       stroke-width: 1.5;
       fill: none;
       stroke-linecap: round;
       stroke-linejoin: round;
+      opacity: 0.85;
+      transition: stroke 0.25s ease, opacity 0.25s ease;
+    }
+
+    .ventaja:hover .ventaja__icon *:not(.accent) {
+      stroke: var(--cyan-deep);
+      opacity: 1;
     }
 
     .ventaja__icon .accent {
@@ -662,8 +723,10 @@
     /* ── Scroll reveal ──────────────────────────────────────── */
     .reveal {
       opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.65s var(--ease-out), transform 0.65s var(--ease-out);
+      transform: translateY(10px);
+      transition:
+        opacity 0.7s var(--ease-out),
+        transform 0.7s var(--ease-out);
     }
 
     .reveal.is-visible {
@@ -671,11 +734,19 @@
       transform: translateY(0);
     }
 
+    .reveal--delay-1 { transition-delay: 0.08s; }
+    .reveal--delay-2 { transition-delay: 0.16s; }
+
     @media (prefers-reduced-motion: reduce) {
       .reveal {
         opacity: 1;
         transform: none;
         transition: none;
+      }
+
+      .process-step:hover .process-step__icon,
+      .process-step:hover .process-step__icon svg {
+        transform: none;
       }
     }
 
@@ -720,7 +791,7 @@
   <main>
 
     <header class="intro wrap">
-      <div class="intro__logo">
+      <div class="intro__logo reveal">
         <img
           src="logo3dmania-completo.png"
           alt="3D Mania Madrid"
@@ -729,7 +800,9 @@
           decoding="async"
         >
       </div>
-      <h1 class="intro__title">Impresión 3D en Madrid</h1>
+      <h1 class="intro__title reveal reveal--delay-1">
+        <span class="intro__title-primary">Impresión 3D</span><span class="intro__title-secondary"> en Madrid</span>
+      </h1>
     </header>
 
     <section class="section-proceso" id="proceso" aria-labelledby="proceso-heading">
@@ -825,7 +898,7 @@
                 <button class="btn-submit" type="submit" id="submit-btn">Enviar archivo</button>
 
                 <div class="form-status form-status--success" id="form-success" role="status" aria-live="polite" hidden>
-                  Archivo enviado correctamente. Te contestamos en menos de 24 horas, normalmente antes.
+                  Archivo enviado con éxito. Te enviaremos un presupuesto por WhatsApp en las próximas horas.
                 </div>
                 <div class="form-status form-status--error" id="form-error" role="alert" hidden>
                   No se pudo enviar. Inténtalo de nuevo o escríbenos a
@@ -1015,6 +1088,16 @@
     (function () {
       /* Scroll reveal */
       var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var siteNav = document.querySelector('.site-nav');
+
+      if (siteNav) {
+        var onScroll = function () {
+          siteNav.classList.toggle('is-scrolled', window.scrollY > 16);
+        };
+        onScroll();
+        window.addEventListener('scroll', onScroll, { passive: true });
+      }
+
       if (!prefersReduced && 'IntersectionObserver' in window) {
         var reveals = document.querySelectorAll('.reveal');
         var observer = new IntersectionObserver(function (entries) {
