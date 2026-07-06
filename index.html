@@ -23,11 +23,13 @@
       --cyan-deep: #527D9A;
       --ink: #182036;
       --warm-white: #FBFAF7;
-      --max-w: 46rem;
-      --max-w-wide: 72rem;
+      --max-w: 42rem;
+      --max-w-wide: 68rem;
       --nav-h: 4rem;
       --pad-x: clamp(1.25rem, 5vw, 3rem);
-      --pad-y: clamp(4rem, 9vw, 7rem);
+      --pad-y: clamp(4.5rem, 10vw, 7.5rem);
+      --shadow-card: 0 1px 2px rgba(22, 35, 63, 0.04), 0 16px 48px rgba(22, 35, 63, 0.09);
+      --shadow-card-hover: 0 2px 4px rgba(22, 35, 63, 0.05), 0 24px 56px rgba(22, 35, 63, 0.11);
       --font-display: "Space Grotesk", system-ui, sans-serif;
       --font-body: "Inter", system-ui, sans-serif;
       --font-mono: "IBM Plex Mono", ui-monospace, monospace;
@@ -155,84 +157,130 @@
       .site-nav__links { display: flex; }
     }
 
-    /* ── Hero layout (brand + step 01) ──────────────────────── */
-    .hero-layout {
-      padding-top: calc(var(--nav-h) + clamp(2.5rem, 6vw, 4rem));
-      padding-bottom: clamp(1.5rem, 3vw, 2rem);
+    /* ── Hero ───────────────────────────────────────────────── */
+    .section-hero {
+      background: var(--paper);
+      padding-top: calc(var(--nav-h) + clamp(2rem, 5vw, 3.5rem));
+      padding-bottom: clamp(2.5rem, 5vw, 4rem);
     }
 
     .hero-layout__grid {
       display: flex;
       flex-direction: column;
-      gap: clamp(2rem, 5vw, 2.75rem);
+      gap: clamp(1.75rem, 4vw, 2.25rem);
     }
 
     @media (min-width: 900px) {
       .hero-layout__grid {
         display: grid;
-        grid-template-columns: 42fr 58fr;
-        gap: clamp(2rem, 4vw, 3.5rem);
+        grid-template-columns: 38fr 62fr;
+        gap: clamp(1.75rem, 3vw, 2.75rem);
         align-items: start;
       }
+    }
 
-      .hero-layout__brand {
-        align-self: center;
-        padding-top: 0.25rem;
-      }
+    .hero-layout__brand {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(0.875rem, 2.5vw, 1.125rem);
     }
 
     .hero-layout__logo {
       display: flex;
       justify-content: flex-start;
-      margin-bottom: clamp(1.25rem, 3.5vw, 1.75rem);
       line-height: 0;
     }
 
     .hero-layout__logo img {
       display: block;
-      height: clamp(3.25rem, 9vw, 4.25rem);
+      height: clamp(3rem, 8.5vw, 4rem);
       width: auto;
-      max-width: min(14rem, 88vw);
+      max-width: min(13rem, 82vw);
       object-fit: contain;
     }
 
     @media (min-width: 900px) {
       .hero-layout__logo img {
-        height: clamp(5.5rem, 11vw, 7.25rem);
+        height: clamp(4.25rem, 7.5vw, 5.75rem);
         max-width: 100%;
       }
     }
 
     .hero-layout__title {
       font-family: var(--font-display);
-      font-size: clamp(1.5rem, 4.2vw, 2.35rem);
+      font-size: clamp(1.4rem, 3.6vw, 2.05rem);
       font-weight: 700;
-      letter-spacing: -0.042em;
-      line-height: 1.12;
-      margin-bottom: 0;
-      max-width: 14ch;
-    }
-
-    .hero-layout__title-primary {
-      color: var(--navy);
-    }
-
-    .hero-layout__title-secondary {
-      color: var(--cyan-deep);
-      font-weight: 600;
-    }
-
-    .hero-layout__step .process-list {
+      letter-spacing: -0.045em;
+      line-height: 1.1;
       margin: 0;
+      max-width: 13ch;
+    }
+
+    .hero-layout__title-primary { color: var(--navy); }
+    .hero-layout__title-secondary { color: var(--cyan-deep); font-weight: 600; }
+
+    .hero-form-panel {
+      background: #fff;
+      border: 1px solid rgba(22, 35, 63, 0.07);
+      box-shadow: var(--shadow-card);
+      padding: clamp(1.35rem, 3.5vw, 2rem);
+      transition: box-shadow 0.35s var(--ease-out);
+    }
+
+    .hero-form-panel:hover {
+      box-shadow: var(--shadow-card-hover);
+    }
+
+    .hero-form-panel .process-list { margin: 0; }
+
+    .hero-form-panel .process-step {
+      padding-bottom: 0;
+    }
+
+    .hero-form-panel .process-step--lead::after {
+      display: none;
+    }
+
+    .hero-form-panel .process-step__tick {
+      display: none;
+    }
+
+    .hero-form-panel .process-step__num {
+      background: #fff;
+    }
+
+    .hero-form-panel .upload-form {
+      margin-top: 1.25rem;
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      padding: 0;
+    }
+
+    .hero-form-panel .form-input,
+    .hero-form-panel .form-textarea {
+      background: var(--paper);
+    }
+
+    /* ── Process track (steps 02–05) ────────────────────────── */
+    .section-proceso__track {
+      background: #fff;
+      padding-block: clamp(2.75rem, 6vw, 4.5rem) var(--pad-y);
+    }
+
+    @media (min-width: 900px) {
+      .process-list--continued {
+        display: grid;
+        grid-template-columns: 38fr 62fr;
+      }
+
+      .process-list--continued .process-step {
+        grid-column: 2;
+      }
     }
 
     .process-list--continued {
-      margin-top: 0;
-    }
-
-    /* ── Process ────────────────────────────────────────────── */
-    .section-proceso {
-      padding-bottom: var(--pad-y);
+      margin: 0;
     }
 
     .process-list {
@@ -241,33 +289,23 @@
 
     .process-step {
       display: grid;
-      grid-template-columns: 4.5rem 1fr;
+      grid-template-columns: 4.75rem 1fr;
       gap: 0 1.5rem;
-      padding-bottom: clamp(2.75rem, 5vw, 3.5rem);
-      position: relative;
-      transition: opacity 0.25s ease;
-    }
-
-    .process-step--lead {
       padding-bottom: clamp(2.5rem, 5vw, 3.25rem);
+      position: relative;
     }
 
     .process-step:last-child { padding-bottom: 0; }
 
-    .process-step:not(:last-child)::after,
-    .process-step--lead::after {
+    .process-step:not(:last-child)::after {
       content: "";
       position: absolute;
-      left: 2.2rem;
-      top: 4.75rem;
+      left: 2.35rem;
+      top: 3.25rem;
       bottom: 0;
       width: 1px;
-      background: var(--navy);
-      opacity: 0.08;
-    }
-
-    .process-step:last-child:not(.process-step--lead)::after {
-      content: none;
+      background: linear-gradient(to bottom, var(--navy) 0%, rgba(22, 35, 63, 0.08) 100%);
+      opacity: 0.2;
     }
 
     .process-step__num-col {
@@ -282,37 +320,34 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 44px;
-      height: 44px;
+      width: 48px;
+      height: 48px;
       flex-shrink: 0;
-      background: rgba(22, 35, 63, 0.04);
-      border: 1px solid rgba(22, 35, 63, 0.08);
-      margin-bottom: 0.5rem;
-      transition:
-        background 0.3s var(--ease-out),
-        border-color 0.3s var(--ease-out),
-        transform 0.3s var(--ease-out);
+      background: var(--navy);
+      border: none;
+      margin-bottom: 0.55rem;
+      transition: background 0.3s var(--ease-out), transform 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out);
     }
 
     .process-step:hover .process-step__icon {
-      background: rgba(127, 184, 217, 0.1);
-      border-color: rgba(127, 184, 217, 0.35);
-      transform: translateY(-1px);
+      background: var(--navy-deep);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(22, 35, 63, 0.18);
     }
 
     .process-step__icon svg {
-      width: 24px;
-      height: 24px;
+      width: 22px;
+      height: 22px;
       display: block;
       transition: transform 0.3s var(--ease-out);
     }
 
     .process-step:hover .process-step__icon svg {
-      transform: scale(1.04);
+      transform: scale(1.05);
     }
 
     .process-step__icon * {
-      stroke: var(--navy);
+      stroke: var(--cyan);
       stroke-width: 1.5;
       fill: none;
       stroke-linecap: round;
@@ -321,7 +356,7 @@
     }
 
     .process-step:hover .process-step__icon *:not(.icon-accent) {
-      stroke: var(--cyan-deep);
+      stroke: var(--warm-white);
     }
 
     .process-step__icon .icon-accent {
@@ -330,11 +365,11 @@
 
     .process-step__num {
       font-family: var(--font-mono);
-      font-size: clamp(0.8rem, 2vw, 0.9rem);
+      font-size: clamp(0.75rem, 1.8vw, 0.85rem);
       font-weight: 500;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.06em;
       color: var(--navy);
-      background: var(--paper);
+      background: #fff;
       padding-block: 0.2rem;
       transition: color 0.3s ease;
     }
@@ -345,31 +380,32 @@
 
     .process-step__tick {
       width: 1px;
-      height: 8px;
+      height: 6px;
       background: var(--navy);
-      opacity: 0.2;
-      margin-top: 0.35rem;
+      opacity: 0.25;
+      margin-top: 0.3rem;
     }
 
     .process-step__body {
-      padding-top: 0.1rem;
+      padding-top: 0.35rem;
       min-width: 0;
     }
 
     .process-step__title {
       font-family: var(--font-display);
-      font-size: clamp(1.15rem, 2.8vw, 1.35rem);
+      font-size: clamp(1.1rem, 2.6vw, 1.3rem);
       font-weight: 600;
       color: var(--ink);
-      margin-bottom: 0.6rem;
-      letter-spacing: -0.015em;
+      margin-bottom: 0.5rem;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
     }
 
     .process-step__text {
-      font-size: clamp(0.95rem, 2vw, 1.05rem);
+      font-size: clamp(0.9375rem, 1.9vw, 1.0625rem);
       color: var(--graphite);
-      line-height: 1.75;
-      max-width: 52ch;
+      line-height: 1.7;
+      max-width: 54ch;
     }
 
     .process-step__text a {
@@ -388,11 +424,11 @@
 
     /* ── Upload form ────────────────────────────────────────── */
     .upload-form {
-      margin-top: 1.75rem;
+      margin-top: 1.5rem;
       background: #fff;
       border: 1px solid rgba(22, 35, 63, 0.08);
-      box-shadow: 0 1px 2px rgba(22, 35, 63, 0.03), 0 8px 32px rgba(22, 35, 63, 0.05);
-      padding: clamp(1.25rem, 4vw, 2rem);
+      box-shadow: var(--shadow-card);
+      padding: clamp(1.35rem, 3.5vw, 2rem);
     }
 
     .form-field {
@@ -406,7 +442,7 @@
     .form-label {
       display: block;
       font-family: var(--font-mono);
-      font-size: 0.68rem;
+      font-size: clamp(0.62rem, 1.4vw, 0.68rem);
       font-weight: 500;
       letter-spacing: 0.1em;
       text-transform: uppercase;
@@ -533,9 +569,9 @@
       align-items: center;
       justify-content: center;
       width: 100%;
-      padding: 0.9rem 1.5rem;
+      padding: clamp(0.85rem, 2vw, 0.95rem) 1.5rem;
       font-family: var(--font-body);
-      font-size: 0.9375rem;
+      font-size: clamp(0.9rem, 1.8vw, 0.975rem);
       font-weight: 600;
       color: var(--warm-white);
       background: var(--orange);
@@ -599,46 +635,53 @@
 
     /* ── Benefits ───────────────────────────────────────────── */
     .section-ventajas {
+      background: var(--navy);
+      color: var(--warm-white);
       padding-block: var(--pad-y);
-      border-top: 1px solid rgba(22, 35, 63, 0.06);
+      box-shadow: inset 0 1px 0 rgba(127, 184, 217, 0.18);
     }
 
     .ventajas-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: clamp(2rem, 4vw, 2.5rem);
+      gap: 1px;
+      background: rgba(127, 184, 217, 0.12);
+      border: 1px solid rgba(127, 184, 217, 0.15);
     }
 
     @media (min-width: 768px) {
       .ventajas-grid {
         grid-template-columns: repeat(3, 1fr);
-        gap: clamp(1.5rem, 3vw, 2.5rem);
       }
     }
 
     .ventaja {
-      padding-top: 0.25rem;
+      background: rgba(15, 25, 46, 0.55);
+      padding: clamp(1.75rem, 3.5vw, 2.25rem);
+      transition: background 0.3s var(--ease-out);
+    }
+
+    .ventaja:hover {
+      background: rgba(15, 25, 46, 0.75);
     }
 
     .ventaja__icon {
-      width: 40px;
-      height: 40px;
-      margin-bottom: 1.25rem;
+      width: 44px;
+      height: 44px;
+      margin-bottom: 1.35rem;
     }
 
     .ventaja__icon * {
-      stroke: var(--navy);
+      stroke: var(--cyan);
       stroke-width: 1.5;
       fill: none;
       stroke-linecap: round;
       stroke-linejoin: round;
-      opacity: 0.85;
       transition: stroke 0.25s ease, opacity 0.25s ease;
     }
 
     .ventaja:hover .ventaja__icon *:not(.accent) {
-      stroke: var(--cyan-deep);
-      opacity: 1;
+      stroke: var(--warm-white);
     }
 
     .ventaja__icon .accent {
@@ -647,25 +690,25 @@
 
     .ventaja__title {
       font-family: var(--font-mono);
-      font-size: 0.72rem;
+      font-size: clamp(0.68rem, 1.5vw, 0.75rem);
       font-weight: 500;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.11em;
       text-transform: uppercase;
-      color: var(--navy);
-      margin-bottom: 0.65rem;
+      color: var(--cyan);
+      margin-bottom: 0.75rem;
     }
 
     .ventaja__text {
-      font-size: 0.9375rem;
-      color: var(--graphite);
+      font-size: clamp(0.9rem, 1.8vw, 1rem);
+      color: rgba(251, 250, 247, 0.78);
       line-height: 1.65;
     }
 
     /* ── Footer ─────────────────────────────────────────────── */
     .site-footer {
       background: var(--navy-deep);
-      color: rgba(251, 250, 247, 0.7);
-      padding: clamp(2.5rem, 5vw, 3.5rem) var(--pad-x);
+      color: rgba(251, 250, 247, 0.72);
+      padding: clamp(3rem, 6vw, 4.5rem) var(--pad-x);
     }
 
     .site-footer__inner {
@@ -676,15 +719,15 @@
     .site-footer__top {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 2rem;
-      margin-bottom: 2.5rem;
+      gap: 2.5rem;
+      margin-bottom: 2.75rem;
     }
 
     @media (min-width: 768px) {
       .site-footer__top {
-        grid-template-columns: auto 1fr;
+        grid-template-columns: minmax(10rem, 14rem) 1fr;
         align-items: start;
-        gap: clamp(2.5rem, 5vw, 4rem);
+        gap: clamp(3rem, 6vw, 5rem);
       }
     }
 
@@ -695,45 +738,45 @@
     @media (max-width: 767px) {
       .site-footer__brand {
         display: flex;
-        justify-content: center;
+        justify-content: flex-start;
       }
     }
 
     .site-footer__brand img {
       display: block;
-      height: clamp(2.25rem, 4.5vw, 2.75rem);
+      height: clamp(3rem, 5.5vw, 3.75rem);
       width: auto;
-      max-width: min(7.5rem, 55vw);
+      max-width: min(11rem, 70vw);
       object-fit: contain;
     }
 
     .site-footer__contact {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 1.5rem;
+      gap: 1.75rem;
     }
 
     @media (min-width: 600px) {
       .site-footer__contact {
         grid-template-columns: repeat(3, 1fr);
-        gap: 2rem;
+        gap: clamp(1.5rem, 3vw, 2.5rem);
       }
     }
 
     .site-footer__label {
       display: block;
       font-family: var(--font-mono);
-      font-size: 0.65rem;
+      font-size: clamp(0.62rem, 1.4vw, 0.68rem);
       font-weight: 500;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.11em;
       text-transform: uppercase;
       color: var(--cyan);
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.55rem;
     }
 
     .site-footer__value {
-      font-size: 0.9375rem;
-      line-height: 1.6;
+      font-size: clamp(0.9rem, 1.8vw, 1rem);
+      line-height: 1.65;
     }
 
     .site-footer__value a {
@@ -829,10 +872,10 @@
   <main>
 
     <section class="section-proceso" id="proceso" aria-labelledby="proceso-heading">
-      <div class="wrap">
-        <h2 class="visually-hidden" id="proceso-heading">Cómo funciona</h2>
+      <h2 class="visually-hidden" id="proceso-heading">Cómo funciona</h2>
 
-        <div class="hero-layout">
+      <div class="section-hero">
+        <div class="wrap wrap--wide">
           <div class="hero-layout__grid">
             <header class="hero-layout__brand">
               <div class="hero-layout__logo reveal">
@@ -850,8 +893,9 @@
             </header>
 
             <div class="hero-layout__step">
-              <ol class="process-list">
-                <li class="process-step process-step--lead reveal">
+              <div class="hero-form-panel reveal reveal--delay-2">
+                <ol class="process-list">
+                  <li class="process-step process-step--lead">
             <div class="process-step__num-col">
               <span class="process-step__icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -948,11 +992,15 @@
               </form>
             </div>
           </li>
-              </ol>
+                </ol>
+              </div>
             </div>
           </div>
         </div>
+      </div>
 
+      <div class="section-proceso__track">
+        <div class="wrap wrap--wide">
         <ol class="process-list process-list--continued">
 
           <li class="process-step reveal">
@@ -1040,6 +1088,7 @@
           </li>
 
         </ol>
+        </div>
       </div>
     </section>
 
