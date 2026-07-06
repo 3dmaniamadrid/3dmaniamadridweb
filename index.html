@@ -155,51 +155,84 @@
       .site-nav__links { display: flex; }
     }
 
-    /* ── Brief intro ────────────────────────────────────────── */
-    .intro {
-      padding-top: calc(var(--nav-h) + clamp(2.75rem, 6.5vw, 4.25rem));
-      padding-bottom: clamp(3.25rem, 7vw, 5rem);
-      text-align: left;
+    /* ── Hero layout (brand + step 01) ──────────────────────── */
+    .hero-layout {
+      padding-top: calc(var(--nav-h) + clamp(2.5rem, 6vw, 4rem));
+      padding-bottom: clamp(1.5rem, 3vw, 2rem);
     }
 
-    .intro__logo {
+    .hero-layout__grid {
+      display: flex;
+      flex-direction: column;
+      gap: clamp(2rem, 5vw, 2.75rem);
+    }
+
+    @media (min-width: 900px) {
+      .hero-layout__grid {
+        display: grid;
+        grid-template-columns: 42fr 58fr;
+        gap: clamp(2rem, 4vw, 3.5rem);
+        align-items: start;
+      }
+
+      .hero-layout__brand {
+        align-self: center;
+        padding-top: 0.25rem;
+      }
+    }
+
+    .hero-layout__logo {
       display: flex;
       justify-content: flex-start;
-      margin-bottom: clamp(1.5rem, 4vw, 2.125rem);
+      margin-bottom: clamp(1.25rem, 3.5vw, 1.75rem);
       line-height: 0;
     }
 
-    .intro__logo img {
+    .hero-layout__logo img {
       display: block;
-      height: clamp(4rem, 11.5vw, 5.5rem);
+      height: clamp(3.25rem, 9vw, 4.25rem);
       width: auto;
-      max-width: min(17rem, 85vw);
+      max-width: min(14rem, 88vw);
       object-fit: contain;
     }
 
-    .intro__title {
+    @media (min-width: 900px) {
+      .hero-layout__logo img {
+        height: clamp(5.5rem, 11vw, 7.25rem);
+        max-width: 100%;
+      }
+    }
+
+    .hero-layout__title {
       font-family: var(--font-display);
       font-size: clamp(1.5rem, 4.2vw, 2.35rem);
       font-weight: 700;
       letter-spacing: -0.042em;
       line-height: 1.12;
       margin-bottom: 0;
-      max-width: 16ch;
+      max-width: 14ch;
     }
 
-    .intro__title-primary {
+    .hero-layout__title-primary {
       color: var(--navy);
     }
 
-    .intro__title-secondary {
+    .hero-layout__title-secondary {
       color: var(--cyan-deep);
       font-weight: 600;
+    }
+
+    .hero-layout__step .process-list {
+      margin: 0;
+    }
+
+    .process-list--continued {
+      margin-top: 0;
     }
 
     /* ── Process ────────────────────────────────────────────── */
     .section-proceso {
       padding-bottom: var(--pad-y);
-      margin-top: -0.5rem;
     }
 
     .process-list {
@@ -215,13 +248,14 @@
       transition: opacity 0.25s ease;
     }
 
-    .process-step:first-child {
-      padding-bottom: clamp(3.25rem, 6.5vw, 4.25rem);
+    .process-step--lead {
+      padding-bottom: clamp(2.5rem, 5vw, 3.25rem);
     }
 
     .process-step:last-child { padding-bottom: 0; }
 
-    .process-step:not(:last-child)::after {
+    .process-step:not(:last-child)::after,
+    .process-step--lead::after {
       content: "";
       position: absolute;
       left: 2.2rem;
@@ -230,6 +264,10 @@
       width: 1px;
       background: var(--navy);
       opacity: 0.08;
+    }
+
+    .process-step:last-child:not(.process-step--lead)::after {
+      content: none;
     }
 
     .process-step__num-col {
@@ -790,27 +828,30 @@
 
   <main>
 
-    <header class="intro wrap">
-      <div class="intro__logo reveal">
-        <img
-          src="logo3dmania-completo.png"
-          alt="3D Mania Madrid"
-          width="745"
-          height="788"
-          decoding="async"
-        >
-      </div>
-      <h1 class="intro__title reveal reveal--delay-1">
-        <span class="intro__title-primary">Impresión 3D</span><span class="intro__title-secondary"> en Madrid</span>
-      </h1>
-    </header>
-
     <section class="section-proceso" id="proceso" aria-labelledby="proceso-heading">
       <div class="wrap">
         <h2 class="visually-hidden" id="proceso-heading">Cómo funciona</h2>
-        <ol class="process-list">
 
-          <li class="process-step reveal">
+        <div class="hero-layout">
+          <div class="hero-layout__grid">
+            <header class="hero-layout__brand">
+              <div class="hero-layout__logo reveal">
+                <img
+                  src="logo3dmania-completo.png"
+                  alt="3D Mania Madrid"
+                  width="745"
+                  height="788"
+                  decoding="async"
+                >
+              </div>
+              <h1 class="hero-layout__title reveal reveal--delay-1">
+                <span class="hero-layout__title-primary">Impresión 3D</span><span class="hero-layout__title-secondary"> en Madrid</span>
+              </h1>
+            </header>
+
+            <div class="hero-layout__step">
+              <ol class="process-list">
+                <li class="process-step process-step--lead reveal">
             <div class="process-step__num-col">
               <span class="process-step__icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -907,6 +948,12 @@
               </form>
             </div>
           </li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <ol class="process-list process-list--continued">
 
           <li class="process-step reveal">
             <div class="process-step__num-col">
