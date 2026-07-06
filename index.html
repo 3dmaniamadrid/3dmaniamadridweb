@@ -1,1404 +1,588 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Impresión 3D en Madrid. Sube tu archivo .STL y recibe presupuesto en horas.">
-  <title>3D Mania Madrid — Impresión 3D en Madrid</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --paper: #EEF1EE;
-      --navy: #16233F;
-      --navy-deep: #0F192E;
-      --cyan: #7FB8D9;
-      --orange: #E15A2C;
-      --orange-hover: #C0491F;
-      --graphite: #6E7888;
-      --graphite-soft: #8791A0;
-      --cyan-deep: #527D9A;
-      --ink: #182036;
-      --warm-white: #FBFAF7;
-      --max-w: 42rem;
-      --max-w-wide: 68rem;
-      --nav-h: 4rem;
-      --pad-x: clamp(1.25rem, 5vw, 3rem);
-      --pad-y: clamp(4.5rem, 10vw, 7.5rem);
-      --shadow-card: 0 1px 2px rgba(22, 35, 63, 0.04), 0 16px 48px rgba(22, 35, 63, 0.09);
-      --shadow-card-hover: 0 2px 4px rgba(22, 35, 63, 0.05), 0 24px 56px rgba(22, 35, 63, 0.11);
-      --font-display: "Space Grotesk", system-ui, sans-serif;
-      --font-body: "Inter", system-ui, sans-serif;
-      --font-mono: "IBM Plex Mono", ui-monospace, monospace;
-      --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    html { scroll-behavior: smooth; scroll-padding-top: var(--nav-h); }
-
-    body {
-      font-family: var(--font-body);
-      font-size: 1rem;
-      line-height: 1.7;
-      color: var(--ink);
-      background: var(--paper);
-      -webkit-font-smoothing: antialiased;
-    }
-
-    :focus-visible {
-      outline: 2px solid var(--orange);
-      outline-offset: 3px;
-    }
-
-    a { color: inherit; }
-
-    .wrap {
-      width: 100%;
-      max-width: var(--max-w);
-      margin-inline: auto;
-      padding-inline: var(--pad-x);
-    }
-
-    .wrap--wide {
-      max-width: var(--max-w-wide);
-    }
-
-    /* ── Navigation ─────────────────────────────────────────── */
-    .site-nav {
-      position: fixed;
-      inset: 0 0 auto 0;
-      z-index: 200;
-      height: var(--nav-h);
-      background: rgba(15, 25, 46, 0.78);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(127, 184, 217, 0.1);
-      transition:
-        background 0.35s var(--ease-out),
-        backdrop-filter 0.35s var(--ease-out),
-        border-color 0.35s var(--ease-out);
-    }
-
-    .site-nav.is-scrolled {
-      background: rgba(15, 25, 46, 0.96);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
-      border-bottom-color: rgba(127, 184, 217, 0.2);
-    }
-
-    .site-nav__inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 100%;
-      gap: 1rem;
-      max-width: var(--max-w-wide);
-      margin-inline: auto;
-      padding-inline: var(--pad-x);
-    }
-
-    .site-nav__logo {
-      display: inline-flex;
-      align-items: center;
-      flex-shrink: 1;
-      min-width: 0;
-      text-decoration: none;
-      line-height: 0;
-      transition: opacity 0.2s;
-    }
-
-    .site-nav__logo:hover { opacity: 0.85; }
-
-    .site-nav__logo img {
-      display: block;
-      height: clamp(1.5rem, 3.5vw, 1.875rem);
-      width: auto;
-      max-width: min(2.25rem, 12vw);
-      object-fit: contain;
-    }
-
-    .site-nav__links {
-      display: none;
-      list-style: none;
-      gap: clamp(1.5rem, 3vw, 2.25rem);
-    }
-
-    .site-nav__links a {
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: rgba(251, 250, 247, 0.65);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-
-    .site-nav__links a:hover { color: var(--warm-white); }
-
-    .site-nav__cta {
-      display: inline-flex;
-      align-items: center;
-      padding: 0.55rem 1rem;
-      font-size: 0.8125rem;
-      font-weight: 600;
-      text-decoration: none;
-      color: var(--warm-white);
-      background: var(--orange);
-      white-space: nowrap;
-      transition: background 0.2s, transform 0.2s var(--ease-out);
-    }
-
-    .site-nav__cta:hover {
-      background: var(--orange-hover);
-      transform: translateY(-1px);
-    }
-
-    @media (min-width: 640px) {
-      .site-nav__links { display: flex; }
-    }
-
-    /* ── Hero ───────────────────────────────────────────────── */
-    .section-hero {
-      background: var(--paper);
-      padding-top: calc(var(--nav-h) + clamp(2rem, 5vw, 3.5rem));
-      padding-bottom: clamp(2.5rem, 5vw, 4rem);
-    }
-
-    .hero-layout__grid {
-      display: flex;
-      flex-direction: column;
-      gap: clamp(1.75rem, 4vw, 2.25rem);
-    }
-
-    @media (min-width: 900px) {
-      .hero-layout__grid {
-        display: grid;
-        grid-template-columns: 38fr 62fr;
-        gap: clamp(1.75rem, 3vw, 2.75rem);
-        align-items: start;
-      }
-    }
-
-    .hero-layout__brand {
-      display: flex;
-      flex-direction: column;
-      gap: clamp(0.875rem, 2.5vw, 1.125rem);
-    }
-
-    .hero-layout__logo {
-      display: flex;
-      justify-content: flex-start;
-      line-height: 0;
-    }
-
-    .hero-layout__logo img {
-      display: block;
-      height: clamp(3rem, 8.5vw, 4rem);
-      width: auto;
-      max-width: min(13rem, 82vw);
-      object-fit: contain;
-    }
-
-    @media (min-width: 900px) {
-      .hero-layout__logo img {
-        height: clamp(4.25rem, 7.5vw, 5.75rem);
-        max-width: 100%;
-      }
-    }
-
-    .hero-layout__title {
-      font-family: var(--font-display);
-      font-size: clamp(1.4rem, 3.6vw, 2.05rem);
-      font-weight: 700;
-      letter-spacing: -0.045em;
-      line-height: 1.1;
-      margin: 0;
-      max-width: 13ch;
-    }
-
-    .hero-layout__title-primary { color: var(--navy); }
-    .hero-layout__title-secondary { color: var(--cyan-deep); font-weight: 600; }
-
-    .hero-form-panel {
-      background: #fff;
-      border: 1px solid rgba(22, 35, 63, 0.07);
-      box-shadow: var(--shadow-card);
-      padding: clamp(1.35rem, 3.5vw, 2rem);
-      transition: box-shadow 0.35s var(--ease-out);
-    }
-
-    .hero-form-panel:hover {
-      box-shadow: var(--shadow-card-hover);
-    }
-
-    .hero-form-panel .process-list { margin: 0; }
-
-    .hero-form-panel .process-step {
-      padding-bottom: 0;
-    }
-
-    .hero-form-panel .process-step--lead::after {
-      display: none;
-    }
-
-    .hero-form-panel .process-step__tick {
-      display: none;
-    }
-
-    .hero-form-panel .process-step__num {
-      background: #fff;
-    }
-
-    .hero-form-panel .upload-form {
-      margin-top: 1.25rem;
-      background: transparent;
-      border: none;
-      box-shadow: none;
-      padding: 0;
-    }
-
-    .hero-form-panel .form-input,
-    .hero-form-panel .form-textarea {
-      background: var(--paper);
-    }
-
-    /* ── Process track (steps 02–05) ────────────────────────── */
-    .section-proceso__track {
-      background: #fff;
-      padding-block: clamp(2.75rem, 6vw, 4.5rem) var(--pad-y);
-    }
-
-    @media (min-width: 900px) {
-      .process-list--continued {
-        display: grid;
-        grid-template-columns: 38fr 62fr;
-      }
-
-      .process-list--continued .process-step {
-        grid-column: 2;
-      }
-    }
-
-    .process-list--continued {
-      margin: 0;
-    }
-
-    .process-list {
-      list-style: none;
-    }
-
-    .process-step {
-      display: grid;
-      grid-template-columns: 4.75rem 1fr;
-      gap: 0 1.5rem;
-      padding-bottom: clamp(2.5rem, 5vw, 3.25rem);
-      position: relative;
-    }
-
-    .process-step:last-child { padding-bottom: 0; }
-
-    .process-step:not(:last-child)::after {
-      content: "";
-      position: absolute;
-      left: 2.35rem;
-      top: 3.25rem;
-      bottom: 0;
-      width: 1px;
-      background: linear-gradient(to bottom, var(--navy) 0%, rgba(22, 35, 63, 0.08) 100%);
-      opacity: 0.2;
-    }
-
-    .process-step__num-col {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      position: relative;
-      z-index: 1;
-    }
-
-    .process-step__icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 48px;
-      height: 48px;
-      flex-shrink: 0;
-      background: var(--navy);
-      border: none;
-      margin-bottom: 0.55rem;
-      transition: background 0.3s var(--ease-out), transform 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out);
-    }
-
-    .process-step:hover .process-step__icon {
-      background: var(--navy-deep);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(22, 35, 63, 0.18);
-    }
-
-    .process-step__icon svg {
-      width: 22px;
-      height: 22px;
-      display: block;
-      transition: transform 0.3s var(--ease-out);
-    }
-
-    .process-step:hover .process-step__icon svg {
-      transform: scale(1.05);
-    }
-
-    .process-step__icon * {
-      stroke: var(--cyan);
-      stroke-width: 1.5;
-      fill: none;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      transition: stroke 0.3s ease;
-    }
-
-    .process-step:hover .process-step__icon *:not(.icon-accent) {
-      stroke: var(--warm-white);
-    }
-
-    .process-step__icon .icon-accent {
-      stroke: var(--orange);
-    }
-
-    .process-step__num {
-      font-family: var(--font-mono);
-      font-size: clamp(0.75rem, 1.8vw, 0.85rem);
-      font-weight: 500;
-      letter-spacing: 0.06em;
-      color: var(--navy);
-      background: #fff;
-      padding-block: 0.2rem;
-      transition: color 0.3s ease;
-    }
-
-    .process-step:hover .process-step__num {
-      color: var(--cyan-deep);
-    }
-
-    .process-step__tick {
-      width: 1px;
-      height: 6px;
-      background: var(--navy);
-      opacity: 0.25;
-      margin-top: 0.3rem;
-    }
-
-    .process-step__body {
-      padding-top: 0.35rem;
-      min-width: 0;
-    }
-
-    .process-step__title {
-      font-family: var(--font-display);
-      font-size: clamp(1.1rem, 2.6vw, 1.3rem);
-      font-weight: 600;
-      color: var(--ink);
-      margin-bottom: 0.5rem;
-      letter-spacing: -0.02em;
-      line-height: 1.2;
-    }
-
-    .process-step__text {
-      font-size: clamp(0.9375rem, 1.9vw, 1.0625rem);
-      color: var(--graphite);
-      line-height: 1.7;
-      max-width: 54ch;
-    }
-
-    .process-step__text a {
-      color: var(--navy);
-      text-decoration: underline;
-      text-decoration-color: rgba(127, 184, 217, 0.55);
-      text-underline-offset: 3px;
-      text-decoration-thickness: 1px;
-      transition: color 0.2s, text-decoration-color 0.2s;
-    }
-
-    .process-step__text a:hover {
-      color: var(--orange);
-      text-decoration-color: var(--orange);
-    }
-
-    /* ── Upload form ────────────────────────────────────────── */
-    .upload-form {
-      margin-top: 1.5rem;
-      background: #fff;
-      border: 1px solid rgba(22, 35, 63, 0.08);
-      box-shadow: var(--shadow-card);
-      padding: clamp(1.35rem, 3.5vw, 2rem);
-    }
-
-    .form-field {
-      margin-bottom: 1.25rem;
-    }
-
-    .form-field:last-of-type {
-      margin-bottom: 1.5rem;
-    }
-
-    .form-label {
-      display: block;
-      font-family: var(--font-mono);
-      font-size: clamp(0.62rem, 1.4vw, 0.68rem);
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--graphite);
-      margin-bottom: 0.5rem;
-    }
-
-    .form-label span {
-      font-weight: 400;
-      text-transform: none;
-      letter-spacing: 0;
-      color: var(--graphite);
-      opacity: 0.75;
-    }
-
-    .form-input,
-    .form-textarea {
-      width: 100%;
-      font-family: var(--font-body);
-      font-size: 1rem;
-      color: var(--ink);
-      background: var(--paper);
-      border: 1px solid rgba(22, 35, 63, 0.15);
-      padding: 0.75rem 1rem;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      -webkit-appearance: none;
-      appearance: none;
-    }
-
-    .form-input:hover,
-    .form-textarea:hover {
-      border-color: rgba(22, 35, 63, 0.28);
-    }
-
-    .form-input:focus,
-    .form-textarea:focus {
-      outline: none;
-      border-color: var(--cyan);
-      box-shadow: 0 0 0 3px rgba(127, 184, 217, 0.25);
-    }
-
-    .form-textarea {
-      resize: vertical;
-      min-height: 5rem;
-    }
-
-    .form-file {
-      position: relative;
-    }
-
-    .form-file__input {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-
-    .form-file__label {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      padding: 1.75rem 1.25rem;
-      background: var(--paper);
-      border: 1.5px dashed rgba(22, 35, 63, 0.22);
-      cursor: pointer;
-      text-align: center;
-      transition: border-color 0.2s, background 0.2s;
-    }
-
-    .form-file__label:hover {
-      border-color: var(--cyan);
-      background: rgba(127, 184, 217, 0.06);
-    }
-
-    .form-file__input:focus-visible + .form-file__label {
-      outline: 2px solid var(--orange);
-      outline-offset: 3px;
-    }
-
-    .form-file__icon {
-      width: 28px;
-      height: 28px;
-      stroke: var(--navy);
-      stroke-width: 1.5;
-      fill: none;
-    }
-
-    .form-file__prompt {
-      font-size: 0.9375rem;
-      font-weight: 500;
-      color: var(--ink);
-    }
-
-    .form-file__hint {
-      font-size: 0.8125rem;
-      color: var(--graphite);
-    }
-
-    .form-file__name {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      color: var(--navy);
-      word-break: break-all;
-      max-width: 100%;
-    }
-
-    .form-file__name:empty { display: none; }
-
-    .form-file__name:not(:empty) {
-      margin-top: 0.25rem;
-      padding: 0.35rem 0.6rem;
-      background: rgba(127, 184, 217, 0.12);
-    }
-
-    .btn-submit {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 100%;
-      padding: clamp(0.85rem, 2vw, 0.95rem) 1.5rem;
-      font-family: var(--font-body);
-      font-size: clamp(0.9rem, 1.8vw, 0.975rem);
-      font-weight: 600;
-      color: var(--warm-white);
-      background: var(--orange);
-      border: none;
-      cursor: pointer;
-      transition: background 0.2s, transform 0.2s var(--ease-out), box-shadow 0.2s;
-    }
-
-    .btn-submit:hover:not(:disabled) {
-      background: var(--orange-hover);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(225, 90, 44, 0.25);
-    }
-
-    .btn-submit:disabled {
-      opacity: 0.65;
-      cursor: not-allowed;
-    }
-
-    .form-status {
-      margin-top: 1.25rem;
-      padding: 1rem 1.25rem;
-      font-size: 0.9375rem;
-      line-height: 1.6;
-      border: 1px solid transparent;
-    }
-
-    .form-status[hidden] { display: none; }
-
-    .form-status--success {
-      background: rgba(127, 184, 217, 0.15);
-      border-color: rgba(127, 184, 217, 0.35);
-      color: var(--navy);
-    }
-
-    .form-status--error {
-      background: rgba(225, 90, 44, 0.08);
-      border-color: rgba(225, 90, 44, 0.25);
-      color: var(--orange-hover);
-    }
-
-    .form-validation-summary {
-      margin-bottom: 1.25rem;
-      font-size: 0.875rem;
-      line-height: 1.55;
-    }
-
-    .form-field--error .form-input,
-    .form-field--error .form-file__label {
-      border-color: var(--orange);
-    }
-
-    .form-error {
-      display: block;
-      margin-top: 0.4rem;
-      font-size: 0.8125rem;
-      color: var(--orange-hover);
-    }
-
-    .form-error[hidden] { display: none; }
-
-    /* ── Benefits ───────────────────────────────────────────── */
-    .section-ventajas {
-      background: var(--navy);
-      color: var(--warm-white);
-      padding-block: var(--pad-y);
-      box-shadow: inset 0 1px 0 rgba(127, 184, 217, 0.18);
-    }
-
-    .ventajas-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1px;
-      background: rgba(127, 184, 217, 0.12);
-      border: 1px solid rgba(127, 184, 217, 0.15);
-    }
-
-    @media (min-width: 768px) {
-      .ventajas-grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-
-    .ventaja {
-      background: rgba(15, 25, 46, 0.55);
-      padding: clamp(1.75rem, 3.5vw, 2.25rem);
-      transition: background 0.3s var(--ease-out);
-    }
-
-    .ventaja:hover {
-      background: rgba(15, 25, 46, 0.75);
-    }
-
-    .ventaja__icon {
-      width: 44px;
-      height: 44px;
-      margin-bottom: 1.35rem;
-    }
-
-    .ventaja__icon * {
-      stroke: var(--cyan);
-      stroke-width: 1.5;
-      fill: none;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      transition: stroke 0.25s ease, opacity 0.25s ease;
-    }
-
-    .ventaja:hover .ventaja__icon *:not(.accent) {
-      stroke: var(--warm-white);
-    }
-
-    .ventaja__icon .accent {
-      stroke: var(--orange);
-    }
-
-    .ventaja__title {
-      font-family: var(--font-mono);
-      font-size: clamp(0.68rem, 1.5vw, 0.75rem);
-      font-weight: 500;
-      letter-spacing: 0.11em;
-      text-transform: uppercase;
-      color: var(--cyan);
-      margin-bottom: 0.75rem;
-    }
-
-    .ventaja__text {
-      font-size: clamp(0.9rem, 1.8vw, 1rem);
-      color: rgba(251, 250, 247, 0.78);
-      line-height: 1.65;
-    }
-
-    /* ── Footer ─────────────────────────────────────────────── */
-    .site-footer {
-      background: var(--navy-deep);
-      color: rgba(251, 250, 247, 0.72);
-      padding: clamp(3rem, 6vw, 4.5rem) var(--pad-x);
-    }
-
-    .site-footer__inner {
-      max-width: var(--max-w-wide);
-      margin-inline: auto;
-    }
-
-    .site-footer__top {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 2.5rem;
-      margin-bottom: 2.75rem;
-    }
-
-    @media (min-width: 768px) {
-      .site-footer__top {
-        grid-template-columns: minmax(10rem, 14rem) 1fr;
-        align-items: start;
-        gap: clamp(3rem, 6vw, 5rem);
-      }
-    }
-
-    .site-footer__brand {
-      line-height: 0;
-    }
-
-    @media (max-width: 767px) {
-      .site-footer__brand {
-        display: flex;
-        justify-content: flex-start;
-      }
-    }
-
-    .site-footer__brand img {
-      display: block;
-      height: clamp(3rem, 5.5vw, 3.75rem);
-      width: auto;
-      max-width: min(11rem, 70vw);
-      object-fit: contain;
-    }
-
-    .site-footer__contact {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1.75rem;
-    }
-
-    @media (min-width: 600px) {
-      .site-footer__contact {
-        grid-template-columns: repeat(3, 1fr);
-        gap: clamp(1.5rem, 3vw, 2.5rem);
-      }
-    }
-
-    .site-footer__label {
-      display: block;
-      font-family: var(--font-mono);
-      font-size: clamp(0.62rem, 1.4vw, 0.68rem);
-      font-weight: 500;
-      letter-spacing: 0.11em;
-      text-transform: uppercase;
-      color: var(--cyan);
-      margin-bottom: 0.55rem;
-    }
-
-    .site-footer__value {
-      font-size: clamp(0.9rem, 1.8vw, 1rem);
-      line-height: 1.65;
-    }
-
-    .site-footer__value a {
-      color: var(--warm-white);
-      text-decoration: underline;
-      text-decoration-color: rgba(127, 184, 217, 0.4);
-      text-underline-offset: 3px;
-      transition: color 0.2s, text-decoration-color 0.2s;
-    }
-
-    .site-footer__value a:hover {
-      color: var(--cyan);
-      text-decoration-color: var(--cyan);
-    }
-
-    .site-footer__copy {
-      padding-top: 2rem;
-      border-top: 1px solid rgba(127, 184, 217, 0.12);
-      font-family: var(--font-mono);
-      font-size: 0.68rem;
-      letter-spacing: 0.05em;
-      color: rgba(251, 250, 247, 0.4);
-    }
-
-    /* ── Scroll reveal ──────────────────────────────────────── */
-    .reveal {
-      opacity: 0;
-      transform: translateY(10px);
-      transition:
-        opacity 0.7s var(--ease-out),
-        transform 0.7s var(--ease-out);
-    }
-
-    .reveal.is-visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .reveal--delay-1 { transition-delay: 0.08s; }
-    .reveal--delay-2 { transition-delay: 0.16s; }
-
-    @media (prefers-reduced-motion: reduce) {
-      .reveal {
-        opacity: 1;
-        transform: none;
-        transition: none;
-      }
-
-      .process-step:hover .process-step__icon,
-      .process-step:hover .process-step__icon svg {
-        transform: none;
-      }
-    }
-
-    .visually-hidden {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Mania Madrid — Impresión 3D en Madrid</title>
+<meta name="description" content="Servicio de impresión 3D en Madrid. Sube tu archivo .STL y recibe presupuesto por WhatsApp en horas.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --white: #FFFFFF;
+    --soft: #F6F7F9;
+    --navy: #16233F;
+    --navy-deep: #0F192E;
+    --cyan: #4FA3D1;
+    --cyan-soft: rgba(79,163,209,0.14);
+    --orange: #E15A2C;
+    --orange-dark: #C0491F;
+    --ink: #16233F;
+    --graphite: #64707D;
+    --hairline: rgba(22,35,63,0.10);
+    --hairline-dark: rgba(255,255,255,0.12);
+
+    --display: 'Space Grotesk', sans-serif;
+    --body-font: 'Inter', sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+
+    --max: 1180px;
+    --nav-h: 4rem;
+    --shadow-card: 0 1px 2px rgba(22,35,63,0.04), 0 20px 50px -12px rgba(22,35,63,0.16);
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  html { scroll-behavior: smooth; scroll-padding-top: var(--nav-h); }
+
+  body {
+    background: var(--white);
+    color: var(--ink);
+    font-family: var(--body-font);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  img, svg { display: block; max-width: 100%; }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
+
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 clamp(20px, 5vw, 56px); }
+
+  .visually-hidden {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+
+  .eyebrow {
+    font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--orange-dark);
+    display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+  }
+  .eyebrow::before { content: ""; width: 20px; height: 1px; background: var(--orange-dark); }
+  .eyebrow.on-dark { color: var(--cyan); }
+  .eyebrow.on-dark::before { background: var(--cyan); }
+
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out); }
+  .reveal.is-visible { opacity: 1; transform: translateY(0); }
+  .reveal--delay-1 { transition-delay: 0.08s; }
+  .reveal--delay-2 { transition-delay: 0.16s; }
+  @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+  /* ================= NAV ================= */
+  header.nav {
+    position: sticky; top: 0; z-index: 50; height: var(--nav-h);
+    background: rgba(255,255,255,0.82); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--hairline);
+    transition: box-shadow 0.3s ease, background 0.3s ease;
+  }
+  header.nav.scrolled { background: rgba(255,255,255,0.96); box-shadow: 0 1px 0 rgba(22,35,63,0.06), 0 8px 24px rgba(22,35,63,0.05); }
+  .nav-inner {
+    display: flex; align-items: center; justify-content: space-between; height: 100%;
+    max-width: var(--max); margin: 0 auto; padding: 0 clamp(20px, 5vw, 56px); gap: 1rem;
+  }
+  .nav-logo { display: inline-flex; align-items: center; line-height: 0; }
+  .nav-logo img { height: 34px; width: auto; }
+  .nav-links { display: flex; gap: 34px; list-style: none; font-size: 0.92rem; font-weight: 500; }
+  .nav-links a { text-decoration: none; color: var(--ink); position: relative; padding-bottom: 4px; }
+  .nav-links a::after {
+    content: ""; position: absolute; left: 0; bottom: 0; width: 0%; height: 1.5px;
+    background: var(--orange); transition: width 0.25s ease;
+  }
+  .nav-links a:hover::after { width: 100%; }
+
+  .btn {
+    font-family: var(--mono); font-size: 0.76rem; letter-spacing: 0.06em; text-transform: uppercase;
+    text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+    padding: 11px 20px; border: 1px solid var(--navy); color: var(--navy);
+    border-radius: 2px; cursor: pointer; background: none;
+    transition: transform 0.15s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-primary { background: var(--orange); border-color: var(--orange); color: var(--white); box-shadow: 0 6px 16px rgba(225,90,44,0.25); }
+  .btn-primary:hover { background: var(--orange-dark); border-color: var(--orange-dark); }
+  .nav .btn { padding: 9px 16px; font-size: 0.7rem; }
+  @media (max-width: 780px) { .nav-links { display: none; } }
+
+  /* ================= HERO ================= */
+  .hero {
+    position: relative;
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(79,163,209,0.10), transparent 60%),
+      radial-gradient(ellipse 700px 400px at 100% 10%, rgba(225,90,44,0.07), transparent 60%),
+      var(--white);
+    padding: clamp(48px, 8vw, 88px) 0 clamp(30px, 5vw, 50px);
+  }
+  .hero-top {
+    max-width: var(--max); margin: 0 auto; padding: 0 clamp(20px, 5vw, 56px);
+    display: grid; grid-template-columns: 0.85fr 1.15fr; gap: clamp(36px, 6vw, 72px); align-items: start;
+  }
+  @media (max-width: 900px) { .hero-top { grid-template-columns: 1fr; } }
+
+  .hero-brand { position: sticky; top: calc(var(--nav-h) + 40px); }
+  .hero-brand img.full-logo { width: min(260px, 70%); margin-bottom: 26px; }
+  .hero-brand h1 {
+    font-family: var(--display); font-weight: 700; font-size: clamp(2.1rem, 3.6vw, 2.9rem);
+    line-height: 1.12; letter-spacing: -0.01em;
+  }
+  .hero-brand h1 .accent { color: var(--cyan); }
+  @media (max-width: 900px) {
+    .hero-brand { position: static; text-align: left; }
+    .hero-brand img.full-logo { width: 190px; }
+  }
+
+  /* ================= FORM CARD ================= */
+  .form-card {
+    background: var(--white); border-radius: 6px; box-shadow: var(--shadow-card);
+    border: 1px solid var(--hairline); overflow: hidden;
+    transition: box-shadow 0.35s var(--ease-out);
+  }
+  .form-card:hover { box-shadow: 0 1px 2px rgba(22,35,63,0.05), 0 26px 60px -12px rgba(22,35,63,0.2); }
+  .form-card-head { padding: clamp(24px,4vw,36px) clamp(24px,4vw,36px) 4px; }
+  .step-tag {
+    display: inline-flex; align-items: center; gap: 10px;
+    font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--graphite); margin-bottom: 14px;
+  }
+  .step-tag .num-badge {
+    width: 26px; height: 26px; border-radius: 50%; background: var(--navy); color: var(--cyan);
+    display: flex; align-items: center; justify-content: center; font-size: 0.7rem;
+  }
+  .form-card-head h2 { font-family: var(--display); font-weight: 700; font-size: 1.4rem; margin-bottom: 10px; }
+  .form-card-head p { color: var(--graphite); font-size: 0.98rem; max-width: 46ch; }
+
+  form.upload-form { padding: 22px clamp(24px,4vw,36px) clamp(28px,4vw,36px); }
+  .field { margin-bottom: 18px; }
+  .field label {
+    display: block; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--graphite); margin-bottom: 7px;
+  }
+  .field label span { text-transform: none; letter-spacing: 0; opacity: 0.75; }
+  .field input[type="text"], .field input[type="email"], .field input[type="tel"], .field textarea {
+    width: 100%; border: 1px solid var(--hairline); background: var(--soft);
+    padding: 12px 14px; font-family: var(--body-font); font-size: 0.96rem; color: var(--ink);
+    border-radius: 4px; transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+    appearance: none; -webkit-appearance: none;
+  }
+  .field input:hover, .field textarea:hover { border-color: rgba(22,35,63,0.25); }
+  .field input:focus, .field textarea:focus {
+    border-color: var(--cyan); background: var(--white); outline: none;
+    box-shadow: 0 0 0 3px var(--cyan-soft);
+  }
+  .field textarea { resize: vertical; min-height: 76px; }
+  .field .err { display: none; color: var(--orange-dark); font-size: 0.82rem; margin-top: 6px; }
+  .field.invalid input, .field.invalid textarea, .field.invalid .dropzone { border-color: var(--orange-dark); }
+  .field.invalid .err { display: block; }
+
+  /* file field as a clickable label (better a11y than JS-only click handler) */
+  .file-input-hidden {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+  .dropzone {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+    border: 1.5px dashed var(--hairline); border-radius: 4px; background: var(--soft);
+    padding: 26px 18px; text-align: center; cursor: pointer;
+    transition: border-color 0.2s ease, background 0.2s ease;
+  }
+  .dropzone:hover { border-color: var(--cyan); background: rgba(79,163,209,0.06); }
+  .file-input-hidden:focus-visible + .dropzone { outline: 2px solid var(--orange); outline-offset: 3px; }
+  .dropzone svg { width: 26px; height: 26px; stroke: var(--navy); }
+  .dropzone .main-txt { font-weight: 600; font-size: 0.96rem; }
+  .dropzone .sub-txt { color: var(--graphite); font-size: 0.82rem; }
+  .file-name {
+    font-family: var(--mono); font-size: 0.76rem; color: var(--navy); margin-top: 8px;
+    word-break: break-all;
+  }
+  .file-name:not(:empty) { padding: 6px 10px; background: var(--cyan-soft); border-radius: 4px; }
+
+  .submit-btn {
+    width: 100%; border: none; background: var(--orange); color: var(--white);
+    font-family: var(--display); font-weight: 600; font-size: 1rem;
+    padding: 15px; border-radius: 4px; cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+    box-shadow: 0 8px 20px rgba(225,90,44,0.25);
+  }
+  .submit-btn:hover:not(:disabled) { background: var(--orange-dark); transform: translateY(-1px); }
+  .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  .form-msg { margin-top: 16px; padding: 14px 16px; border-radius: 4px; font-size: 0.92rem; display: none; }
+  .form-msg.show { display: block; }
+  .form-msg.success { background: var(--cyan-soft); color: var(--navy); border: 1px solid rgba(79,163,209,0.3); }
+  .form-msg.error { background: rgba(225,90,44,0.08); color: var(--orange-dark); border: 1px solid rgba(225,90,44,0.25); }
+  .validation-summary {
+    margin-bottom: 16px; padding: 12px 16px; border-radius: 4px; font-size: 0.86rem;
+    background: rgba(225,90,44,0.08); color: var(--orange-dark); border: 1px solid rgba(225,90,44,0.25);
+    display: none;
+  }
+  .validation-summary.show { display: block; }
+
+  /* ================= PROCESS (steps 2-5) ================= */
+  .process { background: var(--white); padding: clamp(20px,4vw,40px) 0 clamp(70px,9vw,100px); }
+  .steps { position: relative; max-width: 760px; }
+  .steps::before {
+    content: ""; position: absolute; left: 23px; top: 6px; bottom: 6px; width: 1px;
+    background: repeating-linear-gradient(to bottom, var(--hairline) 0 6px, transparent 6px 12px);
+  }
+  .step { position: relative; display: flex; gap: 24px; padding-bottom: 46px; }
+  .step:last-child { padding-bottom: 0; }
+  .step-icon {
+    flex: 0 0 48px; height: 48px; border-radius: 6px; background: var(--navy);
+    display: flex; align-items: center; justify-content: center; z-index: 1;
+    transition: transform 0.25s var(--ease-out), background 0.25s ease, box-shadow 0.25s ease;
+  }
+  .step:hover .step-icon { transform: translateY(-2px); background: var(--navy-deep); box-shadow: 0 8px 18px rgba(22,35,63,0.2); }
+  .step-icon svg { width: 20px; height: 20px; stroke: var(--cyan); }
+  .step-icon .icon-accent { stroke: var(--orange); }
+  .step-body .step-num { font-family: var(--mono); font-size: 0.72rem; color: var(--graphite); margin-bottom: 6px; display: block; }
+  .step-body h3 { font-family: var(--display); font-size: 1.16rem; font-weight: 600; margin-bottom: 8px; }
+  .step-body p { color: var(--graphite); max-width: 52ch; }
+  .step-body a { color: var(--orange-dark); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+
+  /* ================= ADVANTAGES (dark) ================= */
+  .advantages { background: var(--navy-deep); color: var(--white); padding: clamp(56px,8vw,90px) 0; }
+  .adv-head { margin-bottom: clamp(36px,5vw,54px); }
+  .adv-head h2 { font-family: var(--display); font-weight: 700; font-size: clamp(1.5rem, 2.6vw, 2rem); max-width: 24ch; }
+  .adv-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--hairline-dark); }
+  @media (max-width: 800px) { .adv-grid { grid-template-columns: 1fr; } }
+  .adv-item { padding: 30px clamp(18px, 3vw, 34px); border-right: 1px solid var(--hairline-dark); transition: background 0.3s ease; }
+  .adv-item:hover { background: rgba(255,255,255,0.03); }
+  .adv-item:last-child { border-right: none; }
+  @media (max-width: 800px) {
+    .adv-item { border-right: none; border-bottom: 1px solid var(--hairline-dark); }
+    .adv-item:last-child { border-bottom: none; }
+  }
+  .adv-item svg { width: 26px; height: 26px; stroke: var(--cyan); margin-bottom: 18px; }
+  .adv-item .label { font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cyan); margin-bottom: 10px; }
+  .adv-item p { color: rgba(255,255,255,0.78); font-size: 0.98rem; }
+
+  /* ================= FOOTER ================= */
+  footer { background: var(--navy-deep); color: var(--white); border-top: 1px solid var(--hairline-dark); padding: 44px 0 26px; }
+  .footer-grid {
+    display: grid; grid-template-columns: auto 1fr 1fr 1fr; gap: clamp(24px,4vw,40px);
+    align-items: start; padding-bottom: 30px; border-bottom: 1px solid var(--hairline-dark);
+  }
+  @media (max-width: 800px) { .footer-grid { grid-template-columns: 1fr; gap: 26px; } }
+  .footer-logo img { height: 40px; }
+  .footer-col .label { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cyan); margin-bottom: 8px; }
+  .footer-col a, .footer-col span { font-size: 0.96rem; color: rgba(255,255,255,0.9); text-decoration: none; }
+  .footer-col a:hover { color: var(--cyan); }
+  .footer-bottom {
+    padding-top: 20px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+    font-family: var(--mono); font-size: 0.72rem; color: rgba(255,255,255,0.45); letter-spacing: 0.04em;
+  }
+</style>
 </head>
 <body>
 
-  <header class="site-nav">
-    <div class="site-nav__inner">
-      <a href="#" class="site-nav__logo" aria-label="3D Mania Madrid — inicio">
-        <img
-          src="logo3dmania-icono.png"
-          alt="3D Mania Madrid"
-          width="402"
-          height="413"
-          decoding="async"
-          fetchpriority="high"
-        >
-      </a>
-      <nav aria-label="Principal">
-        <ul class="site-nav__links">
-          <li><a href="#proceso">Proceso</a></li>
-          <li><a href="#ventajas">Servicio</a></li>
-          <li><a href="#contacto">Contacto</a></li>
-        </ul>
-      </nav>
-      <a href="#proceso" class="site-nav__cta">Pedir presupuesto</a>
+<header class="nav" id="siteNav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="#top" aria-label="3D Mania Madrid — inicio">
+      <img src="logo3dmania-icono.png" alt="3D Mania Madrid">
+    </a>
+    <nav aria-label="Principal">
+      <ul class="nav-links">
+        <li><a href="#proceso">Proceso</a></li>
+        <li><a href="#ventajas">Servicio</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-primary" href="#top">Pedir presupuesto</a>
+  </div>
+</header>
+
+<section id="top">
+  <h2 class="visually-hidden">Cómo funciona</h2>
+  <div class="hero">
+    <div class="hero-top">
+      <div class="hero-brand reveal">
+        <img class="full-logo" src="logo3dmania-completo.png" alt="3D Mania Madrid">
+        <h1>Impresión 3D <span class="accent">en Madrid</span></h1>
+      </div>
+
+      <div class="form-card reveal reveal--delay-1">
+        <div class="form-card-head">
+          <div class="step-tag"><span class="num-badge">01</span>Paso 1</div>
+          <h2>Sube tu archivo</h2>
+          <p>Sube tu archivo en formato .STL y cuéntanos qué necesitas. Te enviamos un presupuesto, normalmente en un par de horas, máximo 12.</p>
+        </div>
+        <form class="upload-form" id="uploadForm" autocomplete="off" novalidate>
+          <div class="validation-summary" id="validationSummary" role="alert"></div>
+
+          <div class="field" id="fileField">
+            <label for="archivo">Archivo .STL</label>
+            <input type="file" id="archivo" name="archivo" accept=".stl" required class="file-input-hidden">
+            <label for="archivo" class="dropzone">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+              <span class="main-txt" id="dzText">Selecciona tu archivo .STL</span>
+              <span class="sub-txt">Solo archivos .STL, máximo 10 MB</span>
+            </label>
+            <div class="file-name" id="fileNameShown" aria-live="polite"></div>
+            <div class="err" id="errArchivo">Selecciona un archivo .STL de menos de 10 MB.</div>
+          </div>
+
+          <div class="field" id="nombreField">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" name="nombre" autocomplete="off" required>
+            <div class="err">Indica tu nombre.</div>
+          </div>
+
+          <div class="field" id="emailField">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" autocomplete="new-password" required>
+            <div class="err">Indica un email válido.</div>
+          </div>
+
+          <div class="field" id="movilField">
+            <label for="movil">Móvil</label>
+            <input type="tel" id="movil" name="movil" autocomplete="new-password" inputmode="numeric" pattern="^[67][0-9]{8}$" required>
+            <div class="err">Indica un móvil válido de 9 dígitos que empiece por 6 o 7.</div>
+          </div>
+
+          <div class="field">
+            <label for="comentarios">Comentarios <span>(opcional)</span></label>
+            <textarea id="comentarios" name="comentarios" autocomplete="off"></textarea>
+          </div>
+
+          <button type="submit" class="submit-btn" id="submitBtn">Enviar archivo</button>
+          <div class="form-msg success" id="formSuccess" role="status" aria-live="polite">Archivo enviado con éxito. Te enviaremos un presupuesto por WhatsApp en las próximas horas.</div>
+          <div class="form-msg error" id="formError" role="alert">Ha habido un problema de conexión. Inténtalo de nuevo o escríbenos por WhatsApp.</div>
+        </form>
+      </div>
     </div>
-  </header>
+  </div>
 
-  <main>
-
-    <section class="section-proceso" id="proceso" aria-labelledby="proceso-heading">
-      <h2 class="visually-hidden" id="proceso-heading">Cómo funciona</h2>
-
-      <div class="section-hero">
-        <div class="wrap wrap--wide">
-          <div class="hero-layout__grid">
-            <header class="hero-layout__brand">
-              <div class="hero-layout__logo reveal">
-                <img
-                  src="logo3dmania-completo.png"
-                  alt="3D Mania Madrid"
-                  width="745"
-                  height="788"
-                  decoding="async"
-                >
-              </div>
-              <h1 class="hero-layout__title reveal reveal--delay-1">
-                <span class="hero-layout__title-primary">Impresión 3D</span><span class="hero-layout__title-secondary"> en Madrid</span>
-              </h1>
-            </header>
-
-            <div class="hero-layout__step">
-              <div class="hero-form-panel reveal reveal--delay-2">
-                <ol class="process-list">
-                  <li class="process-step process-step--lead">
-            <div class="process-step__num-col">
-              <span class="process-step__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M8 17h8"/>
-                  <path d="M12 14V6"/>
-                  <path d="M9 9l3-3 3 3"/>
-                  <path d="M5 19h14a1 1 0 001-1v-4a1 1 0 00-1-1H5a1 1 0 00-1 1v4a1 1 0 001 1z"/>
-                </svg>
-              </span>
-              <span class="process-step__num">01</span>
-              <span class="process-step__tick" aria-hidden="true"></span>
-            </div>
-            <div class="process-step__body">
-              <h3 class="process-step__title">Sube tu archivo</h3>
-              <p class="process-step__text">
-                Sube tu archivo en formato .STL y cuéntanos qué necesitas. Te
-                enviamos un presupuesto, normalmente en un par de horas, máximo 12.
-              </p>
-
-              <form
-                class="upload-form"
-                id="upload-form"
-                autocomplete="off"
-                novalidate
-              >
-                <div class="form-field form-field--file" id="field-archivo">
-                  <label class="form-label" for="archivo">Archivo .STL</label>
-                  <div class="form-file">
-                    <input
-                      class="form-file__input"
-                      type="file"
-                      id="archivo"
-                      name="archivo"
-                      accept=".stl"
-                      required
-                    >
-                    <label class="form-file__label" for="archivo">
-                      <svg class="form-file__icon" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M12 16V4M12 4L8 8M12 4L16 8"/>
-                        <path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/>
-                      </svg>
-                      <span class="form-file__prompt">Selecciona tu archivo .STL</span>
-                      <span class="form-file__hint">Solo archivos .STL</span>
-                    </label>
-                  </div>
-                  <span class="form-file__name" id="file-name" aria-live="polite"></span>
-                  <span class="form-error" id="error-archivo" hidden>Selecciona un archivo .STL válido.</span>
-                </div>
-
-                <div class="form-field" id="field-nombre">
-                  <label class="form-label" for="nombre">Nombre</label>
-                  <input class="form-input" type="text" id="nombre" name="nombre" required autocomplete="off">
-                  <span class="form-error" id="error-nombre" hidden>Indica tu nombre.</span>
-                </div>
-
-                <div class="form-field" id="field-email">
-                  <label class="form-label" for="email">Email</label>
-                  <input class="form-input" type="email" id="email" name="email" required autocomplete="off">
-                  <span class="form-error" id="error-email" hidden>Indica un email válido.</span>
-                </div>
-
-                <div class="form-field" id="field-telefono">
-                  <label class="form-label" for="telefono">Móvil</label>
-                  <input
-                    class="form-input"
-                    type="tel"
-                    id="telefono"
-                    name="telefono"
-                    required
-                    pattern="^[67][0-9]{8}$"
-                    title="Introduce un móvil válido de 9 dígitos que empiece por 6 o 7"
-                    autocomplete="off"
-                    inputmode="numeric"
-                  >
-                  <span class="form-error" id="error-telefono" hidden>Introduce un móvil válido de 9 dígitos que empiece por 6 o 7.</span>
-                </div>
-
-                <div class="form-field">
-                  <label class="form-label" for="comentarios">Comentarios <span>(opcional)</span></label>
-                  <textarea class="form-textarea" id="comentarios" name="comentarios" rows="3" autocomplete="off"></textarea>
-                </div>
-
-                <div class="form-status form-status--error form-validation-summary" id="form-validation-summary" role="alert" hidden></div>
-
-                <button class="btn-submit" type="submit" id="submit-btn">Enviar archivo</button>
-
-                <div class="form-status form-status--success" id="form-success" role="status" aria-live="polite" hidden>
-                  Archivo enviado con éxito. Te enviaremos un presupuesto por WhatsApp en las próximas horas.
-                </div>
-                <div class="form-status form-status--error" id="form-error" role="alert" hidden>
-                  No se pudo enviar. Inténtalo de nuevo o escríbenos a
-                  <a href="mailto:3dmaniamadrid@gmail.com">3dmaniamadrid@gmail.com</a>.
-                </div>
-              </form>
-            </div>
-          </li>
-                </ol>
-              </div>
-            </div>
+  <div class="process" id="proceso">
+    <div class="wrap">
+      <div class="steps">
+        <div class="step reveal">
+          <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></div>
+          <div class="step-body">
+            <span class="step-num">02</span>
+            <h3>Recibe tu presupuesto</h3>
+            <p>Te lo enviamos por WhatsApp, normalmente en pocas horas.</p>
+          </div>
+        </div>
+        <div class="step reveal">
+          <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
+          <div class="step-body">
+            <span class="step-num">03</span>
+            <h3>Confirma</h3>
+            <p>Acepta el presupuesto respondiendo a nuestro WhatsApp o llamándonos al <a href="tel:+34633586174">633 58 61 74</a>.</p>
+          </div>
+        </div>
+        <div class="step reveal">
+          <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18v-3a6 6 0 0 1 12 0v3"/><rect x="4" y="18" width="4" height="4" rx="1"/><rect x="16" y="18" width="4" height="4" rx="1"/></svg></div>
+          <div class="step-body">
+            <span class="step-num">04</span>
+            <h3>Lo producimos</h3>
+            <p>Ponemos la impresora en marcha para tu pieza.</p>
+          </div>
+        </div>
+        <div class="step reveal">
+          <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-7.58 7-12A7 7 0 0 0 5 10c0 4.42 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+          <div class="step-body">
+            <span class="step-num">05</span>
+            <h3>Recogida</h3>
+            <p>Te avisamos en cuanto esté todo listo. Recogida en Calle Evangelina Sobredo Galanes, 40E, 28023, Madrid.</p>
           </div>
         </div>
       </div>
-
-      <div class="section-proceso__track">
-        <div class="wrap wrap--wide">
-        <ol class="process-list process-list--continued">
-
-          <li class="process-step reveal">
-            <div class="process-step__num-col">
-              <span class="process-step__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="3" y="6" width="18" height="13" rx="1"/>
-                  <path d="M3 8l9 6 9-6"/>
-                  <path d="M16 14l2 2"/>
-                  <path d="M18 16l2-2"/>
-                </svg>
-              </span>
-              <span class="process-step__num">02</span>
-              <span class="process-step__tick" aria-hidden="true"></span>
-            </div>
-            <div class="process-step__body">
-              <h3 class="process-step__title">Recibe tu presupuesto</h3>
-              <p class="process-step__text">
-                Te lo enviamos por WhatsApp, normalmente en pocas horas.
-              </p>
-            </div>
-          </li>
-
-          <li class="process-step reveal">
-            <div class="process-step__num-col">
-              <span class="process-step__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M5 6h14a1 1 0 011 1v7a1 1 0 01-1 1H9l-3 3V7a1 1 0 011-1z"/>
-                  <path d="M9 11l2 2 4-4"/>
-                </svg>
-              </span>
-              <span class="process-step__num">03</span>
-              <span class="process-step__tick" aria-hidden="true"></span>
-            </div>
-            <div class="process-step__body">
-              <h3 class="process-step__title">Confirma</h3>
-              <p class="process-step__text">
-                Acepta el presupuesto respondiendo a nuestro WhatsApp o llamándonos al
-                <a href="tel:+34633586174">633 58 61 74</a>.
-              </p>
-            </div>
-          </li>
-
-          <li class="process-step reveal">
-            <div class="process-step__num-col">
-              <span class="process-step__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M5 18h14"/>
-                  <ellipse cx="12" cy="15" rx="7" ry="1.5"/>
-                  <ellipse cx="12" cy="12" rx="6" ry="1.5"/>
-                  <ellipse cx="12" cy="9" rx="5" ry="1.5"/>
-                  <line class="icon-accent" x1="6" y1="6" x2="18" y2="6"/>
-                  <path d="M10 6h4v2h-4z"/>
-                </svg>
-              </span>
-              <span class="process-step__num">04</span>
-              <span class="process-step__tick" aria-hidden="true"></span>
-            </div>
-            <div class="process-step__body">
-              <h3 class="process-step__title">Lo producimos</h3>
-              <p class="process-step__text">
-                Ponemos la impresora en marcha para tu pieza.
-              </p>
-            </div>
-          </li>
-
-          <li class="process-step reveal">
-            <div class="process-step__num-col">
-              <span class="process-step__icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M12 21s-6-5.2-6-9.5a6 6 0 1112 0C18 15.8 12 21 12 21z"/>
-                  <circle cx="12" cy="11.5" r="2"/>
-                </svg>
-              </span>
-              <span class="process-step__num">05</span>
-              <span class="process-step__tick" aria-hidden="true"></span>
-            </div>
-            <div class="process-step__body">
-              <h3 class="process-step__title">Recogida</h3>
-              <p class="process-step__text">
-                Te avisamos en cuanto esté todo listo. Recogida en Calle
-                Evangelina Sobredo Galanes, 40E, 28023, Madrid.
-              </p>
-            </div>
-          </li>
-
-        </ol>
-        </div>
-      </div>
-    </section>
-
-    <section class="section-ventajas" id="ventajas" aria-labelledby="ventajas-heading">
-      <div class="wrap wrap--wide">
-        <h2 class="visually-hidden" id="ventajas-heading">Por qué elegirnos</h2>
-        <div class="ventajas-grid">
-
-          <article class="ventaja reveal">
-            <svg class="ventaja__icon" viewBox="0 0 40 40" aria-hidden="true">
-              <rect x="6" y="28" width="28" height="6" rx="1"/>
-              <ellipse cx="20" cy="22" rx="14" ry="3"/>
-              <ellipse cx="20" cy="16" rx="12" ry="3"/>
-              <ellipse cx="20" cy="10" rx="9" ry="2.5"/>
-              <line class="accent" x1="6" y1="10" x2="34" y2="10"/>
-            </svg>
-            <h3 class="ventaja__title">Máxima calidad</h3>
-            <p class="ventaja__text">
-              Impresión con la Bambu Lab P2S, resolución de capa desde 0,05 mm.
-            </p>
-          </article>
-
-          <article class="ventaja reveal">
-            <svg class="ventaja__icon" viewBox="0 0 40 40" aria-hidden="true">
-              <circle cx="20" cy="14" r="6"/>
-              <path d="M8 34c0-6.627 5.373-12 12-12s12 5.373 12 12"/>
-              <path d="M28 18h6M31 15v6"/>
-            </svg>
-            <h3 class="ventaja__title">Asesoramiento personalizado</h3>
-            <p class="ventaja__text">
-              Te ayudamos a elegir material y ajustes antes de imprimir, no solo a ejecutar el archivo.
-            </p>
-          </article>
-
-          <article class="ventaja reveal">
-            <svg class="ventaja__icon" viewBox="0 0 40 40" aria-hidden="true">
-              <circle cx="20" cy="20" r="14"/>
-              <path d="M20 10v10l7 4"/>
-              <path d="M30 6l3 3M34 14h-4"/>
-            </svg>
-            <h3 class="ventaja__title">Agilidad</h3>
-            <p class="ventaja__text">
-              Presupuesto en horas y producción rápida, sin colas de fabricación en serie.
-            </p>
-          </article>
-
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <footer class="site-footer" id="contacto">
-    <div class="site-footer__inner">
-      <div class="site-footer__top">
-        <div class="site-footer__brand">
-          <img
-            src="logo3dmania-completo.png"
-            alt="3D Mania Madrid"
-            width="745"
-            height="788"
-            decoding="async"
-          >
-        </div>
-        <div class="site-footer__contact">
-          <div>
-            <span class="site-footer__label">Email</span>
-            <p class="site-footer__value">
-              <a href="mailto:3dmaniamadrid@gmail.com">3dmaniamadrid@gmail.com</a>
-            </p>
-          </div>
-          <div>
-            <span class="site-footer__label">Teléfono / WhatsApp</span>
-            <p class="site-footer__value">
-              <a href="tel:+34633586174">633 58 61 74</a>
-              ·
-              <a href="https://wa.me/34633586174" target="_blank" rel="noopener noreferrer">WhatsApp</a>
-            </p>
-          </div>
-          <div>
-            <span class="site-footer__label">Dirección</span>
-            <p class="site-footer__value">
-              Calle Evangelina Sobredo Galanes, 40E, Madrid
-            </p>
-          </div>
-        </div>
-      </div>
-      <p class="site-footer__copy">&copy; 2026 3D Mania Madrid</p>
     </div>
-  </footer>
+  </div>
+</section>
 
-  <script>
-    (function () {
-      /* Scroll reveal */
-      var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      var siteNav = document.querySelector('.site-nav');
+<section class="advantages" id="ventajas">
+  <div class="wrap">
+    <div class="adv-head reveal">
+      <div class="eyebrow on-dark">Por qué 3D Mania Madrid</div>
+      <h2>Calidad, asesoramiento y rapidez en cada pieza</h2>
+    </div>
+    <div class="adv-grid reveal">
+      <div class="adv-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        <div class="label">Máxima calidad</div>
+        <p>Impresión con la Bambu Lab P2S, resolución de capa desde 0,05 mm.</p>
+      </div>
+      <div class="adv-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>
+        <div class="label">Asesoramiento personalizado</div>
+        <p>Te ayudamos a elegir material y ajustes antes de imprimir, no solo a ejecutar el archivo.</p>
+      </div>
+      <div class="adv-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+        <div class="label">Agilidad</div>
+        <p>Presupuesto en horas y producción rápida, sin colas de fabricación en serie.</p>
+      </div>
+    </div>
+  </div>
+</section>
 
-      if (siteNav) {
-        var onScroll = function () {
-          siteNav.classList.toggle('is-scrolled', window.scrollY > 16);
-        };
-        onScroll();
-        window.addEventListener('scroll', onScroll, { passive: true });
-      }
+<footer id="contacto">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-logo"><img src="logo3dmania-completo.png" alt="3D Mania Madrid"></div>
+      <div class="footer-col">
+        <div class="label">Email</div>
+        <a href="mailto:3dmaniamadrid@gmail.com">3dmaniamadrid@gmail.com</a>
+      </div>
+      <div class="footer-col">
+        <div class="label">Teléfono / WhatsApp</div>
+        <a href="tel:+34633586174">633 58 61 74</a> ·
+        <a href="https://wa.me/34633586174" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+      </div>
+      <div class="footer-col">
+        <div class="label">Dirección</div>
+        <span>Calle Evangelina Sobredo Galanes, 40E, Madrid</span>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 3D Mania Madrid</span>
+      <span>MADRID, ESPAÑA</span>
+    </div>
+  </div>
+</footer>
 
-      if (!prefersReduced && 'IntersectionObserver' in window) {
-        var reveals = document.querySelectorAll('.reveal');
-        var observer = new IntersectionObserver(function (entries) {
-          entries.forEach(function (entry) {
-            if (entry.isIntersecting) {
-              entry.target.classList.add('is-visible');
-              observer.unobserve(entry.target);
-            }
-          });
-        }, { threshold: 0.1, rootMargin: '0px 0px -24px 0px' });
-        reveals.forEach(function (el) { observer.observe(el); });
-      } else {
-        document.querySelectorAll('.reveal').forEach(function (el) {
-          el.classList.add('is-visible');
-        });
-      }
+<script>
+(function () {
+  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      /* File input display */
-      var fileInput = document.getElementById('archivo');
-      var fileNameEl = document.getElementById('file-name');
+  var nav = document.getElementById('siteNav');
+  var onScroll = function () { nav.classList.toggle('scrolled', window.scrollY > 8); };
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
 
-      fileInput.addEventListener('change', function () {
-        var file = fileInput.files[0];
-        fileNameEl.textContent = file ? file.name : '';
+  var reveals = document.querySelectorAll('.reveal');
+  if (!prefersReduced && 'IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
       });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    reveals.forEach(function (el) { observer.observe(el); });
+  } else {
+    reveals.forEach(function (el) { el.classList.add('is-visible'); });
+  }
 
-      /* Form submission */
-      var form = document.getElementById('upload-form');
-      var submitBtn = document.getElementById('submit-btn');
-      var successEl = document.getElementById('form-success');
-      var errorEl = document.getElementById('form-error');
-      var validationSummary = document.getElementById('form-validation-summary');
-      var telefonoInput = document.getElementById('telefono');
-      var appsScriptUrl = 'https://script.google.com/macros/s/AKfycbxZOIRrGZ_aTgWo9s5_fGvJmPzAlBlWHEKPKASl0pMv9e02-ARYoMndBzyVxyK7hHC2Lw/exec';
-      var maxFileSize = 10 * 1024 * 1024;
+  var fileInput = document.getElementById('archivo');
+  var dzText = document.getElementById('dzText');
+  var fileNameShown = document.getElementById('fileNameShown');
 
-      function isValidStl(file) {
-        if (!file) return false;
-        return file.name.toLowerCase().endsWith('.stl');
-      }
+  fileInput.addEventListener('change', function () {
+    var f = fileInput.files[0];
+    if (f) {
+      dzText.textContent = 'Archivo seleccionado';
+      fileNameShown.textContent = f.name;
+    } else {
+      dzText.textContent = 'Selecciona tu archivo .STL';
+      fileNameShown.textContent = '';
+    }
+  });
 
-      function isValidEmail(value) {
-        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-      }
+  var form = document.getElementById('uploadForm');
+  var submitBtn = document.getElementById('submitBtn');
+  var formSuccess = document.getElementById('formSuccess');
+  var formError = document.getElementById('formError');
+  var validationSummary = document.getElementById('validationSummary');
+  var movilInput = document.getElementById('movil');
+  var MAX_SIZE = 10 * 1024 * 1024;
+  var GAS_URL = 'https://script.google.com/macros/s/AKfycbxZOIRrGZ_aTgWo9s5_fGvJmPzAlBlWHEKPKASl0pMv9e02-ARYoMndBzyVxyK7hHC2Lw/exec';
 
-      function normalizePhone(value) {
-        return value.replace(/\D/g, '');
-      }
+  function setInvalid(fieldId, invalid) {
+    var el = document.getElementById(fieldId);
+    if (el) el.classList.toggle('invalid', invalid);
+  }
 
-      function isValidPhone(value) {
-        return /^[67][0-9]{8}$/.test(normalizePhone(value));
-      }
+  function clearAllStates() {
+    ['fileField','nombreField','emailField','movilField'].forEach(function (id) { setInvalid(id, false); });
+    validationSummary.classList.remove('show');
+    validationSummary.textContent = '';
+    formSuccess.classList.remove('show');
+    formError.classList.remove('show');
+  }
 
-      function setFieldError(fieldId, errorId, show, message) {
-        var field = document.getElementById(fieldId);
-        var error = document.getElementById(errorId);
-        if (message) error.textContent = message;
-        if (show) {
-          field.classList.add('form-field--error');
-          error.hidden = false;
-        } else {
-          field.classList.remove('form-field--error');
-          error.hidden = true;
-        }
-      }
+  function validate() {
+    var missing = [];
+    var firstInvalid = null;
 
-      function clearAllErrors() {
-        setFieldError('field-archivo', 'error-archivo', false);
-        setFieldError('field-nombre', 'error-nombre', false);
-        setFieldError('field-email', 'error-email', false);
-        setFieldError('field-telefono', 'error-telefono', false);
-        validationSummary.hidden = true;
-        validationSummary.textContent = '';
-      }
+    var file = fileInput.files[0];
+    var fileOk = file && file.name.toLowerCase().endsWith('.stl') && file.size <= MAX_SIZE;
+    setInvalid('fileField', !fileOk);
+    if (!fileOk) { missing.push('archivo .STL válido (máx. 10 MB)'); firstInvalid = firstInvalid || document.getElementById('fileField'); }
 
-      function validateForm() {
-        clearAllErrors();
+    var nombre = document.getElementById('nombre').value.trim();
+    setInvalid('nombreField', !nombre);
+    if (!nombre) { missing.push('nombre'); firstInvalid = firstInvalid || document.getElementById('nombreField'); }
 
-        var file = fileInput.files[0];
-        var nombre = document.getElementById('nombre').value.trim();
-        var email = document.getElementById('email').value.trim();
-        var telefono = telefonoInput.value.trim();
-        var missing = [];
-        var firstErrorField = null;
+    var email = document.getElementById('email').value.trim();
+    var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    setInvalid('emailField', !emailOk);
+    if (!emailOk) { missing.push('email válido'); firstInvalid = firstInvalid || document.getElementById('emailField'); }
 
-        if (!file) {
-          setFieldError('field-archivo', 'error-archivo', true, 'Selecciona un archivo .STL.');
-          missing.push('archivo .STL');
-          firstErrorField = firstErrorField || document.getElementById('field-archivo');
-        } else if (!isValidStl(file)) {
-          setFieldError('field-archivo', 'error-archivo', true, 'El archivo debe tener extensión .STL.');
-          missing.push('archivo .STL válido');
-          firstErrorField = firstErrorField || document.getElementById('field-archivo');
-        } else if (file.size > maxFileSize) {
-          setFieldError('field-archivo', 'error-archivo', true, 'El archivo no puede superar los 10 MB.');
-          missing.push('archivo de menos de 10 MB');
-          firstErrorField = firstErrorField || document.getElementById('field-archivo');
-        }
+    var movil = movilInput.value.trim();
+    var movilOk = /^[67][0-9]{8}$/.test(movil);
+    setInvalid('movilField', !movilOk);
+    if (!movilOk) { missing.push('móvil válido (9 dígitos, empieza por 6 o 7)'); firstInvalid = firstInvalid || document.getElementById('movilField'); }
 
-        if (!nombre) {
-          setFieldError('field-nombre', 'error-nombre', true, 'Indica tu nombre.');
-          missing.push('nombre');
-          firstErrorField = firstErrorField || document.getElementById('field-nombre');
-        }
+    if (missing.length) {
+      validationSummary.textContent = missing.length === 1
+        ? 'Falta completar: ' + missing[0] + '.'
+        : 'Faltan por completar: ' + missing.join(', ') + '.';
+      validationSummary.classList.add('show');
+      if (firstInvalid) firstInvalid.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'center' });
+      return false;
+    }
+    return true;
+  }
 
-        if (!email) {
-          setFieldError('field-email', 'error-email', true, 'Indica tu email.');
-          missing.push('email');
-          firstErrorField = firstErrorField || document.getElementById('field-email');
-        } else if (!isValidEmail(email)) {
-          setFieldError('field-email', 'error-email', true, 'Indica un email válido.');
-          missing.push('email válido');
-          firstErrorField = firstErrorField || document.getElementById('field-email');
-        }
+  function fileToBase64(file) {
+    return new Promise(function (resolve, reject) {
+      var reader = new FileReader();
+      reader.onload = function () { resolve(reader.result); };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
 
-        if (!telefono) {
-          setFieldError('field-telefono', 'error-telefono', true, 'Indica tu teléfono móvil.');
-          missing.push('teléfono');
-          firstErrorField = firstErrorField || document.getElementById('field-telefono');
-        } else if (!isValidPhone(telefono)) {
-          setFieldError(
-            'field-telefono',
-            'error-telefono',
-            true,
-            'Introduce un móvil válido de 9 dígitos que empiece por 6 o 7.'
-          );
-          missing.push('teléfono válido');
-          firstErrorField = firstErrorField || document.getElementById('field-telefono');
-        }
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    clearAllStates();
+    if (!validate()) return;
 
-        if (missing.length) {
-          validationSummary.textContent = missing.length === 1
-            ? 'Falta completar: ' + missing[0] + '.'
-            : 'Faltan por completar: ' + missing.join(', ') + '.';
-          validationSummary.hidden = false;
-          if (firstErrorField) {
-            firstErrorField.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'nearest' });
-          }
-          return false;
-        }
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Enviando…';
+    var file = fileInput.files[0];
 
-        return true;
-      }
-
-      function readFileAsDataURL(file) {
-        return new Promise(function (resolve, reject) {
-          var reader = new FileReader();
-          reader.onload = function () { resolve(reader.result); };
-          reader.onerror = function () { reject(new Error('Error al leer el archivo')); };
-          reader.readAsDataURL(file);
-        });
-      }
-
-      ['input', 'change'].forEach(function (evt) {
-        form.addEventListener(evt, function (e) {
-          if (!e.target.closest('.form-field')) return;
-          clearAllErrors();
-        });
-      });
-
-      form.addEventListener('submit', function (e) {
-        e.preventDefault();
-        successEl.hidden = true;
-        errorEl.hidden = true;
-
-        if (!validateForm()) return;
-
-        var file = fileInput.files[0];
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Enviando…';
-
-        readFileAsDataURL(file)
-          .then(function (dataUrl) {
-            var formData = new FormData();
-            formData.append('nombre', document.getElementById('nombre').value.trim());
-            formData.append('email', document.getElementById('email').value.trim());
-            formData.append('movil', normalizePhone(telefonoInput.value));
-            formData.append('comentarios', document.getElementById('comentarios').value.trim());
-            formData.append('archivo_nombre', file.name);
-            formData.append('archivo_base64', dataUrl);
-
-            return fetch(appsScriptUrl, {
-              method: 'POST',
-              body: formData,
-              mode: 'no-cors'
-            });
-          })
-          .then(function () {
-            form.reset();
-            fileNameEl.textContent = '';
-            clearAllErrors();
-            successEl.hidden = false;
-            successEl.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'nearest' });
-          })
-          .catch(function () {
-            errorEl.hidden = false;
-            errorEl.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'nearest' });
-          })
-          .finally(function () {
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Enviar archivo';
-          });
-      });
-    })();
-  </script>
+    fileToBase64(file).then(function (base64) {
+      var fd = new FormData();
+      fd.append('nombre', document.getElementById('nombre').value.trim());
+      fd.append('email', document.getElementById('email').value.trim());
+      fd.append('movil', movilInput.value.trim());
+      fd.append('comentarios', document.getElementById('comentarios').value.trim());
+      fd.append('archivo_nombre', file.name);
+      fd.append('archivo_base64', base64);
+      return fetch(GAS_URL, { method: 'POST', mode: 'no-cors', body: fd });
+    }).then(function () {
+      form.reset();
+      dzText.textContent = 'Selecciona tu archivo .STL';
+      fileNameShown.textContent = '';
+      formSuccess.classList.add('show');
+      formSuccess.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'nearest' });
+    }).catch(function () {
+      formError.classList.add('show');
+      formError.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'nearest' });
+    }).finally(function () {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Enviar archivo';
+    });
+  });
+})();
+</script>
 
 </body>
 </html>
