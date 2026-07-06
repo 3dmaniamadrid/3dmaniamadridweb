@@ -3,13 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Impresión 3D en Madrid. Envía tu archivo .STL y recoge tu pieza. Presupuesto sin compromiso.">
+  <meta name="description" content="Impresión 3D en Madrid. Sube tu archivo .STL y recibe presupuesto en horas.">
   <title>3D Mania Madrid — Impresión 3D en Madrid</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
   <style>
-    /* ── Reset & tokens ─────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
@@ -22,18 +21,15 @@
       --graphite: #5B6472;
       --ink: #182036;
       --warm-white: #FBFAF7;
-      --max-w: 72rem;
+      --max-w: 46rem;
+      --max-w-wide: 72rem;
       --nav-h: 4rem;
       --pad-x: clamp(1.25rem, 5vw, 3rem);
-      --pad-y: clamp(5rem, 11vw, 8.5rem);
+      --pad-y: clamp(4rem, 9vw, 7rem);
       --font-display: "Space Grotesk", system-ui, sans-serif;
       --font-body: "Inter", system-ui, sans-serif;
       --font-mono: "IBM Plex Mono", ui-monospace, monospace;
       --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-      --vase-layers: 24;
-      --layer-dur: 0.42s;
-      --layer-gap: 0.11s;
-      --vase-total: calc(var(--layer-dur) + (var(--vase-layers) - 1) * var(--layer-gap));
     }
 
     html { scroll-behavior: smooth; scroll-padding-top: var(--nav-h); }
@@ -45,7 +41,6 @@
       color: var(--ink);
       background: var(--paper);
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
     }
 
     :focus-visible {
@@ -55,38 +50,15 @@
 
     a { color: inherit; }
 
-    /* ── Scroll reveal ──────────────────────────────────────── */
-    .reveal {
-      opacity: 0;
-      transform: translateY(28px);
-      transition:
-        opacity 0.75s var(--ease-out),
-        transform 0.75s var(--ease-out);
-    }
-
-    .reveal.is-visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .reveal--delay-1 { transition-delay: 0.08s; }
-    .reveal--delay-2 { transition-delay: 0.16s; }
-    .reveal--delay-3 { transition-delay: 0.24s; }
-
-    @media (prefers-reduced-motion: reduce) {
-      .reveal {
-        opacity: 1;
-        transform: none;
-        transition: none;
-      }
-    }
-
-    /* ── Layout shell ───────────────────────────────────────── */
     .wrap {
       width: 100%;
       max-width: var(--max-w);
       margin-inline: auto;
       padding-inline: var(--pad-x);
+    }
+
+    .wrap--wide {
+      max-width: var(--max-w-wide);
     }
 
     /* ── Navigation ─────────────────────────────────────────── */
@@ -107,31 +79,29 @@
       justify-content: space-between;
       height: 100%;
       gap: 1rem;
+      max-width: var(--max-w-wide);
+      margin-inline: auto;
+      padding-inline: var(--pad-x);
     }
 
     .site-nav__logo {
       display: inline-flex;
       align-items: center;
-      gap: 0.55rem;
-      font-family: var(--font-mono);
-      font-size: clamp(0.62rem, 1.8vw, 0.75rem);
-      font-weight: 500;
-      letter-spacing: 0.11em;
-      color: var(--warm-white);
+      flex-shrink: 1;
+      min-width: 0;
       text-decoration: none;
-      white-space: nowrap;
+      line-height: 0;
       transition: opacity 0.2s;
     }
 
-    .site-nav__logo:hover { opacity: 0.8; }
+    .site-nav__logo:hover { opacity: 0.85; }
 
-    .site-nav__mark {
+    .site-nav__logo img {
       display: block;
-      width: 7px;
-      height: 7px;
-      background: var(--orange);
-      transform: rotate(45deg);
-      flex-shrink: 0;
+      height: clamp(1.5rem, 3.5vw, 1.875rem);
+      width: auto;
+      max-width: min(2.25rem, 12vw);
+      object-fit: contain;
     }
 
     .site-nav__links {
@@ -141,7 +111,6 @@
     }
 
     .site-nav__links a {
-      font-family: var(--font-body);
       font-size: 0.875rem;
       font-weight: 500;
       color: rgba(251, 250, 247, 0.65);
@@ -155,7 +124,6 @@
       display: inline-flex;
       align-items: center;
       padding: 0.55rem 1rem;
-      font-family: var(--font-body);
       font-size: 0.8125rem;
       font-weight: 600;
       text-decoration: none;
@@ -174,364 +142,52 @@
       .site-nav__links { display: flex; }
     }
 
-    /* ── Section divider ────────────────────────────────────── */
-    .divider {
-      padding-block: clamp(2.5rem, 5vw, 4rem);
+    /* ── Brief intro ────────────────────────────────────────── */
+    .intro {
+      padding-top: calc(var(--nav-h) + clamp(2.5rem, 6vw, 4rem));
+      padding-bottom: clamp(2.75rem, 5.5vw, 4rem);
+      text-align: center;
     }
 
-    .divider__track {
+    .intro__logo {
       display: flex;
-      align-items: center;
+      justify-content: center;
+      margin-bottom: clamp(1.35rem, 3.75vw, 1.875rem);
+      line-height: 0;
     }
 
-    .divider__tick {
-      flex-shrink: 0;
-      width: 1px;
-      height: 10px;
-      background: var(--navy);
-      opacity: 0.4;
+    .intro__logo img {
+      display: block;
+      height: clamp(4.25rem, 12.5vw, 6rem);
+      width: auto;
+      max-width: min(19rem, 92vw);
+      object-fit: contain;
     }
 
-    .divider__rail {
-      flex: 1;
-      height: 1px;
-      background: var(--navy);
-      opacity: 0.15;
-    }
-
-    .divider__label {
-      flex-shrink: 0;
-      padding-inline: 1.25rem;
-      font-family: var(--font-mono);
-      font-size: clamp(0.6rem, 1.4vw, 0.68rem);
-      font-weight: 500;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--graphite);
-    }
-
-    /* ── Hero ───────────────────────────────────────────────── */
-    .hero {
-      padding-top: calc(var(--nav-h) + clamp(3rem, 7vw, 5.5rem));
-      padding-bottom: clamp(4rem, 8vw, 6.5rem);
-    }
-
-    .hero__grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: clamp(2.5rem, 6vw, 4rem);
-      align-items: center;
-    }
-
-    @media (min-width: 768px) {
-      .hero__grid {
-        grid-template-columns: 1.05fr 0.95fr;
-        gap: clamp(3rem, 5vw, 5rem);
-      }
-    }
-
-    .hero__eyebrow {
-      font-family: var(--font-mono);
-      font-size: clamp(0.65rem, 1.5vw, 0.72rem);
-      font-weight: 500;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--graphite);
-      margin-bottom: 1.25rem;
-    }
-
-    .hero__title {
+    .intro__title {
       font-family: var(--font-display);
-      font-size: clamp(2.25rem, 6.5vw, 3.75rem);
+      font-size: clamp(1.75rem, 5vw, 2.75rem);
       font-weight: 700;
-      line-height: 1.05;
       letter-spacing: -0.03em;
+      line-height: 1.1;
       color: var(--ink);
-      margin-bottom: 1.5rem;
+      margin-bottom: 0;
     }
 
-    .hero__subtitle {
-      font-size: clamp(1rem, 2.2vw, 1.125rem);
-      font-weight: 400;
-      color: var(--graphite);
-      max-width: 42ch;
-      margin-bottom: 2.5rem;
-      line-height: 1.75;
-    }
-
-    .hero__actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.875rem;
-      margin-bottom: 2.75rem;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0.875rem 1.5rem;
-      font-family: var(--font-body);
-      font-size: 0.875rem;
-      font-weight: 600;
-      text-decoration: none;
-      border: 1.5px solid transparent;
-      transition:
-        background 0.2s,
-        color 0.2s,
-        border-color 0.2s,
-        transform 0.25s var(--ease-out),
-        box-shadow 0.25s var(--ease-out);
-      cursor: pointer;
-    }
-
-    .btn--primary {
-      color: var(--warm-white);
-      background: var(--orange);
-      border-color: var(--orange);
-    }
-
-    .btn--primary:hover {
-      background: var(--orange-hover);
-      border-color: var(--orange-hover);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(225, 90, 44, 0.28);
-    }
-
-    .btn--ghost {
-      color: var(--navy);
-      background: transparent;
-      border-color: rgba(22, 35, 63, 0.35);
-    }
-
-    .btn--ghost:hover {
-      background: var(--navy);
-      color: var(--warm-white);
-      border-color: var(--navy);
-      transform: translateY(-2px);
-    }
-
-    .hero__specs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.625rem 2rem;
-      list-style: none;
-      font-family: var(--font-mono);
-      font-size: clamp(0.7rem, 1.5vw, 0.78rem);
-      color: var(--graphite);
-      letter-spacing: 0.02em;
-    }
-
-    .hero__specs li {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .hero__specs li::before {
-      content: "";
-      width: 4px;
-      height: 4px;
-      background: var(--cyan);
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    /* Vase illustration */
-    .hero__visual {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: radial-gradient(ellipse at 50% 80%, rgba(127, 184, 217, 0.08) 0%, transparent 65%), var(--navy);
-      aspect-ratio: 4 / 5;
-      max-height: 520px;
-      width: 100%;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .vase-svg {
-      width: min(68%, 240px);
-      height: auto;
-      overflow: visible;
-    }
-
-    .vase-layer {
-      fill: none;
-      stroke: var(--cyan);
-      stroke-width: 1.15;
-      stroke-linecap: round;
-      stroke-dasharray: 1;
-      stroke-dashoffset: 1;
-      opacity: 0;
-      animation:
-        draw-layer var(--layer-dur) var(--ease-out) forwards,
-        fade-layer 0.3s ease forwards;
-    }
-
-    .vase-layer:nth-child(2)  { animation-delay: calc(0 * var(--layer-gap)), calc(0 * var(--layer-gap)); }
-    .vase-layer:nth-child(3)  { animation-delay: calc(1 * var(--layer-gap)), calc(1 * var(--layer-gap)); }
-    .vase-layer:nth-child(4)  { animation-delay: calc(2 * var(--layer-gap)), calc(2 * var(--layer-gap)); }
-    .vase-layer:nth-child(5)  { animation-delay: calc(3 * var(--layer-gap)), calc(3 * var(--layer-gap)); }
-    .vase-layer:nth-child(6)  { animation-delay: calc(4 * var(--layer-gap)), calc(4 * var(--layer-gap)); }
-    .vase-layer:nth-child(7)  { animation-delay: calc(5 * var(--layer-gap)), calc(5 * var(--layer-gap)); }
-    .vase-layer:nth-child(8)  { animation-delay: calc(6 * var(--layer-gap)), calc(6 * var(--layer-gap)); }
-    .vase-layer:nth-child(9)  { animation-delay: calc(7 * var(--layer-gap)), calc(7 * var(--layer-gap)); }
-    .vase-layer:nth-child(10) { animation-delay: calc(8 * var(--layer-gap)), calc(8 * var(--layer-gap)); }
-    .vase-layer:nth-child(11) { animation-delay: calc(9 * var(--layer-gap)), calc(9 * var(--layer-gap)); }
-    .vase-layer:nth-child(12) { animation-delay: calc(10 * var(--layer-gap)), calc(10 * var(--layer-gap)); }
-    .vase-layer:nth-child(13) { animation-delay: calc(11 * var(--layer-gap)), calc(11 * var(--layer-gap)); }
-    .vase-layer:nth-child(14) { animation-delay: calc(12 * var(--layer-gap)), calc(12 * var(--layer-gap)); }
-    .vase-layer:nth-child(15) { animation-delay: calc(13 * var(--layer-gap)), calc(13 * var(--layer-gap)); }
-    .vase-layer:nth-child(16) { animation-delay: calc(14 * var(--layer-gap)), calc(14 * var(--layer-gap)); }
-    .vase-layer:nth-child(17) { animation-delay: calc(15 * var(--layer-gap)), calc(15 * var(--layer-gap)); }
-    .vase-layer:nth-child(18) { animation-delay: calc(16 * var(--layer-gap)), calc(16 * var(--layer-gap)); }
-    .vase-layer:nth-child(19) { animation-delay: calc(17 * var(--layer-gap)), calc(17 * var(--layer-gap)); }
-    .vase-layer:nth-child(20) { animation-delay: calc(18 * var(--layer-gap)), calc(18 * var(--layer-gap)); }
-    .vase-layer:nth-child(21) { animation-delay: calc(19 * var(--layer-gap)), calc(19 * var(--layer-gap)); }
-    .vase-layer:nth-child(22) { animation-delay: calc(20 * var(--layer-gap)), calc(20 * var(--layer-gap)); }
-    .vase-layer:nth-child(23) { animation-delay: calc(21 * var(--layer-gap)), calc(21 * var(--layer-gap)); }
-    .vase-layer:nth-child(24) { animation-delay: calc(22 * var(--layer-gap)), calc(22 * var(--layer-gap)); }
-    .vase-layer:nth-child(25) { animation-delay: calc(23 * var(--layer-gap)), calc(23 * var(--layer-gap)); }
-
-    @keyframes draw-layer {
-      to { stroke-dashoffset: 0; }
-    }
-
-    @keyframes fade-layer {
-      to { opacity: 0.92; }
-    }
-
-    .print-head {
-      stroke: var(--orange);
-      stroke-width: 1.5;
-      opacity: 0;
-      filter: drop-shadow(0 0 6px rgba(225, 90, 44, 0.5));
-      transform-box: fill-box;
-      transform-origin: center;
-      animation:
-        print-head-move var(--vase-total) linear forwards,
-        print-head-fade 0.4s ease forwards;
-    }
-
-    @keyframes print-head-move {
-      0%   { transform: translateY(218px); }
-      100% { transform: translateY(2px); }
-    }
-
-    @keyframes print-head-fade {
-      to { opacity: 0.85; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .vase-layer {
-        animation: none;
-        stroke-dashoffset: 0;
-        opacity: 0.92;
-      }
-      .print-head { display: none; }
-    }
-
-    @media (max-width: 767px) {
-      .hero__visual {
-        max-height: 380px;
-        aspect-ratio: 5 / 4;
-      }
-
-      .vase-svg {
-        width: min(60%, 200px);
-      }
-    }
-
-    /* ── Section headings ───────────────────────────────────── */
-    .section-head {
-      margin-bottom: clamp(2rem, 5vw, 3rem);
-    }
-
-    .section-head__title {
-      font-family: var(--font-display);
-      font-size: clamp(1.75rem, 4vw, 2.5rem);
-      font-weight: 700;
-      letter-spacing: -0.025em;
-      color: var(--ink);
-      margin-bottom: 1rem;
-      line-height: 1.15;
-    }
-
-    .section-head__lead {
-      font-size: clamp(1rem, 2vw, 1.125rem);
-      color: var(--graphite);
-      max-width: 54ch;
-      line-height: 1.75;
-    }
-
-    /* ── Service / spec sheet ─────────────────────────────── */
-    .section-servicio {
-      padding-bottom: var(--pad-y);
-    }
-
-    .spec-sheet {
-      background: #fff;
-      border: 1px solid rgba(22, 35, 63, 0.08);
-      box-shadow: 0 1px 3px rgba(22, 35, 63, 0.04), 0 8px 32px rgba(22, 35, 63, 0.06);
-    }
-
-    .spec-sheet__row {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 0.35rem;
-      padding: 1.25rem 1.5rem;
-      border-bottom: 1px solid rgba(22, 35, 63, 0.07);
-      transition: background 0.2s;
-    }
-
-    .spec-sheet__row:last-child { border-bottom: none; }
-
-    .spec-sheet__row:hover {
-      background: rgba(238, 241, 238, 0.6);
-    }
-
-    @media (min-width: 540px) {
-      .spec-sheet__row {
-        grid-template-columns: 13rem 1fr;
-        align-items: baseline;
-        gap: 2rem;
-        padding: 1.15rem 2rem;
-      }
-    }
-
-    .spec-sheet__label {
-      font-family: var(--font-mono);
-      font-size: 0.72rem;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--graphite);
-    }
-
-    .spec-sheet__value {
-      font-size: 1rem;
-      font-weight: 500;
-      color: var(--ink);
-      letter-spacing: -0.01em;
-    }
-
-    /* ── Process timeline ─────────────────────────────────── */
+    /* ── Process ────────────────────────────────────────────── */
     .section-proceso {
       padding-bottom: var(--pad-y);
     }
 
     .process-list {
       list-style: none;
-      position: relative;
-      padding-left: 0;
     }
 
     .process-step {
       display: grid;
-      grid-template-columns: 3.75rem 1fr;
+      grid-template-columns: 4.5rem 1fr;
       gap: 0 1.5rem;
-      padding-bottom: clamp(2.5rem, 5vw, 3.25rem);
+      padding-bottom: clamp(2.75rem, 5vw, 3.5rem);
       position: relative;
     }
 
@@ -540,8 +196,8 @@
     .process-step:not(:last-child)::after {
       content: "";
       position: absolute;
-      left: 1.85rem;
-      top: 2.75rem;
+      left: 2.2rem;
+      top: 4.75rem;
       bottom: 0;
       width: 1px;
       background: var(--navy);
@@ -556,14 +212,43 @@
       z-index: 1;
     }
 
+    .process-step__icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      flex-shrink: 0;
+      background: var(--navy);
+      margin-bottom: 0.5rem;
+    }
+
+    .process-step__icon svg {
+      width: 24px;
+      height: 24px;
+      display: block;
+    }
+
+    .process-step__icon * {
+      stroke: var(--cyan);
+      stroke-width: 1.5;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .process-step__icon .icon-accent {
+      stroke: var(--orange);
+    }
+
     .process-step__num {
       font-family: var(--font-mono);
-      font-size: clamp(0.85rem, 2vw, 0.95rem);
+      font-size: clamp(0.8rem, 2vw, 0.9rem);
       font-weight: 500;
       letter-spacing: 0.04em;
       color: var(--navy);
       background: var(--paper);
-      padding-block: 0.25rem;
+      padding-block: 0.2rem;
     }
 
     .process-step__tick {
@@ -571,33 +256,34 @@
       height: 8px;
       background: var(--navy);
       opacity: 0.3;
-      margin-top: 0.4rem;
+      margin-top: 0.35rem;
     }
 
     .process-step__body {
-      padding-top: 0.15rem;
+      padding-top: 0.1rem;
+      min-width: 0;
     }
 
     .process-step__title {
       font-family: var(--font-display);
-      font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+      font-size: clamp(1.15rem, 2.8vw, 1.35rem);
       font-weight: 600;
       color: var(--ink);
-      margin-bottom: 0.65rem;
+      margin-bottom: 0.6rem;
       letter-spacing: -0.015em;
     }
 
     .process-step__text {
       font-size: clamp(0.95rem, 2vw, 1.05rem);
       color: var(--graphite);
-      max-width: 54ch;
       line-height: 1.75;
+      max-width: 52ch;
     }
 
     .process-step__text a {
       color: var(--navy);
       text-decoration: underline;
-      text-decoration-color: rgba(127, 184, 217, 0.6);
+      text-decoration-color: rgba(127, 184, 217, 0.55);
       text-underline-offset: 3px;
       text-decoration-thickness: 1px;
       transition: color 0.2s, text-decoration-color 0.2s;
@@ -608,37 +294,24 @@
       text-decoration-color: var(--orange);
     }
 
-    /* ── Contact ────────────────────────────────────────────── */
-    .section-contacto {
-      padding-bottom: var(--pad-y);
+    /* ── Upload form ────────────────────────────────────────── */
+    .upload-form {
+      margin-top: 1.5rem;
+      background: #fff;
+      border: 1px solid rgba(22, 35, 63, 0.1);
+      box-shadow: 0 1px 3px rgba(22, 35, 63, 0.04), 0 12px 40px rgba(22, 35, 63, 0.07);
+      padding: clamp(1.25rem, 4vw, 2rem);
     }
 
-    .contact-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: clamp(2rem, 5vw, 3rem);
+    .form-field {
+      margin-bottom: 1.25rem;
     }
 
-    @media (min-width: 768px) {
-      .contact-grid {
-        grid-template-columns: 1fr 1fr;
-        align-items: start;
-      }
+    .form-field:last-of-type {
+      margin-bottom: 1.5rem;
     }
 
-    .contact-list {
-      list-style: none;
-    }
-
-    .contact-list__item {
-      padding: 1.25rem 0;
-      border-bottom: 1px solid rgba(22, 35, 63, 0.08);
-    }
-
-    .contact-list__item:first-child { padding-top: 0; }
-    .contact-list__item:last-child { border-bottom: none; padding-bottom: 0; }
-
-    .contact-list__label {
+    .form-label {
       display: block;
       font-family: var(--font-mono);
       font-size: 0.68rem;
@@ -646,377 +319,890 @@
       letter-spacing: 0.1em;
       text-transform: uppercase;
       color: var(--graphite);
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.5rem;
     }
 
-    .contact-list__value {
-      font-size: clamp(1rem, 2vw, 1.0625rem);
+    .form-label span {
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: 0;
+      color: var(--graphite);
+      opacity: 0.75;
+    }
+
+    .form-input,
+    .form-textarea {
+      width: 100%;
+      font-family: var(--font-body);
+      font-size: 1rem;
       color: var(--ink);
-      line-height: 1.6;
+      background: var(--paper);
+      border: 1px solid rgba(22, 35, 63, 0.15);
+      padding: 0.75rem 1rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      -webkit-appearance: none;
+      appearance: none;
     }
 
-    .contact-list__value a {
+    .form-input:hover,
+    .form-textarea:hover {
+      border-color: rgba(22, 35, 63, 0.28);
+    }
+
+    .form-input:focus,
+    .form-textarea:focus {
+      outline: none;
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 3px rgba(127, 184, 217, 0.25);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 5rem;
+    }
+
+    .form-file {
+      position: relative;
+    }
+
+    .form-file__input {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .form-file__label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 1.75rem 1.25rem;
+      background: var(--paper);
+      border: 1.5px dashed rgba(22, 35, 63, 0.22);
+      cursor: pointer;
+      text-align: center;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .form-file__label:hover {
+      border-color: var(--cyan);
+      background: rgba(127, 184, 217, 0.06);
+    }
+
+    .form-file__input:focus-visible + .form-file__label {
+      outline: 2px solid var(--orange);
+      outline-offset: 3px;
+    }
+
+    .form-file__icon {
+      width: 28px;
+      height: 28px;
+      stroke: var(--navy);
+      stroke-width: 1.5;
+      fill: none;
+    }
+
+    .form-file__prompt {
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    .form-file__hint {
+      font-size: 0.8125rem;
+      color: var(--graphite);
+    }
+
+    .form-file__name {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
       color: var(--navy);
-      text-decoration: underline;
-      text-decoration-color: rgba(127, 184, 217, 0.5);
-      text-underline-offset: 3px;
-      text-decoration-thickness: 1px;
-      transition: color 0.2s, text-decoration-color 0.2s;
+      word-break: break-all;
+      max-width: 100%;
     }
 
-    .contact-list__value a:hover {
-      color: var(--orange);
-      text-decoration-color: var(--orange);
+    .form-file__name:empty { display: none; }
+
+    .form-file__name:not(:empty) {
+      margin-top: 0.25rem;
+      padding: 0.35rem 0.6rem;
+      background: rgba(127, 184, 217, 0.12);
     }
 
-    .contact-list__note {
+    .btn-submit {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 0.9rem 1.5rem;
+      font-family: var(--font-body);
+      font-size: 0.9375rem;
+      font-weight: 600;
+      color: var(--warm-white);
+      background: var(--orange);
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s var(--ease-out), box-shadow 0.2s;
+    }
+
+    .btn-submit:hover:not(:disabled) {
+      background: var(--orange-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(225, 90, 44, 0.25);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    .form-status {
+      margin-top: 1.25rem;
+      padding: 1rem 1.25rem;
+      font-size: 0.9375rem;
+      line-height: 1.6;
+      border: 1px solid transparent;
+    }
+
+    .form-status[hidden] { display: none; }
+
+    .form-status--success {
+      background: rgba(127, 184, 217, 0.15);
+      border-color: rgba(127, 184, 217, 0.35);
+      color: var(--navy);
+    }
+
+    .form-status--error {
+      background: rgba(225, 90, 44, 0.08);
+      border-color: rgba(225, 90, 44, 0.25);
+      color: var(--orange-hover);
+    }
+
+    .form-validation-summary {
+      margin-bottom: 1.25rem;
+      font-size: 0.875rem;
+      line-height: 1.55;
+    }
+
+    .form-field--error .form-input,
+    .form-field--error .form-file__label {
+      border-color: var(--orange);
+    }
+
+    .form-error {
       display: block;
       margin-top: 0.4rem;
-      font-size: 0.875rem;
-      color: var(--graphite);
-      line-height: 1.6;
+      font-size: 0.8125rem;
+      color: var(--orange-hover);
     }
 
-    .contact-aside {
-      background: var(--navy);
-      color: var(--warm-white);
-      padding: clamp(1.75rem, 3.5vw, 2.25rem);
+    .form-error[hidden] { display: none; }
+
+    /* ── Benefits ───────────────────────────────────────────── */
+    .section-ventajas {
+      padding-block: var(--pad-y);
+      border-top: 1px solid rgba(22, 35, 63, 0.08);
     }
 
-    .contact-aside__title {
+    .ventajas-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: clamp(2rem, 4vw, 2.5rem);
+    }
+
+    @media (min-width: 768px) {
+      .ventajas-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: clamp(1.5rem, 3vw, 2.5rem);
+      }
+    }
+
+    .ventaja {
+      padding-top: 0.25rem;
+    }
+
+    .ventaja__icon {
+      width: 40px;
+      height: 40px;
+      margin-bottom: 1.25rem;
+    }
+
+    .ventaja__icon * {
+      stroke: var(--cyan);
+      stroke-width: 1.5;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .ventaja__icon .accent {
+      stroke: var(--orange);
+    }
+
+    .ventaja__title {
       font-family: var(--font-mono);
       font-size: 0.72rem;
       font-weight: 500;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: var(--cyan);
-      margin-bottom: 1.5rem;
-      padding-bottom: 0.875rem;
-      border-bottom: 1px solid rgba(127, 184, 217, 0.2);
+      color: var(--navy);
+      margin-bottom: 0.65rem;
     }
 
-    .contact-aside__list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .contact-aside__list li {
+    .ventaja__text {
       font-size: 0.9375rem;
-      line-height: 1.6;
-      color: rgba(251, 250, 247, 0.82);
-      padding-left: 1.125rem;
-      position: relative;
-    }
-
-    .contact-aside__list li::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0.55em;
-      width: 5px;
-      height: 5px;
-      background: var(--orange);
-      border-radius: 50%;
+      color: var(--graphite);
+      line-height: 1.65;
     }
 
     /* ── Footer ─────────────────────────────────────────────── */
     .site-footer {
       background: var(--navy-deep);
-      color: rgba(251, 250, 247, 0.5);
-      padding: 2rem var(--pad-x);
+      color: rgba(251, 250, 247, 0.7);
+      padding: clamp(2.5rem, 5vw, 3.5rem) var(--pad-x);
     }
 
     .site-footer__inner {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      gap: 0.75rem 2rem;
+      max-width: var(--max-w-wide);
+      margin-inline: auto;
+    }
+
+    .site-footer__top {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      margin-bottom: 2.5rem;
+    }
+
+    @media (min-width: 768px) {
+      .site-footer__top {
+        grid-template-columns: auto 1fr;
+        align-items: start;
+        gap: clamp(2.5rem, 5vw, 4rem);
+      }
+    }
+
+    .site-footer__brand {
+      line-height: 0;
+    }
+
+    @media (max-width: 767px) {
+      .site-footer__brand {
+        display: flex;
+        justify-content: center;
+      }
+    }
+
+    .site-footer__brand img {
+      display: block;
+      height: clamp(2.25rem, 4.5vw, 2.75rem);
+      width: auto;
+      max-width: min(7.5rem, 55vw);
+      object-fit: contain;
+    }
+
+    .site-footer__contact {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 600px) {
+      .site-footer__contact {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem;
+      }
+    }
+
+    .site-footer__label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 0.5rem;
+    }
+
+    .site-footer__value {
+      font-size: 0.9375rem;
+      line-height: 1.6;
+    }
+
+    .site-footer__value a {
+      color: var(--warm-white);
+      text-decoration: underline;
+      text-decoration-color: rgba(127, 184, 217, 0.4);
+      text-underline-offset: 3px;
+      transition: color 0.2s, text-decoration-color 0.2s;
+    }
+
+    .site-footer__value a:hover {
+      color: var(--cyan);
+      text-decoration-color: var(--cyan);
+    }
+
+    .site-footer__copy {
+      padding-top: 2rem;
+      border-top: 1px solid rgba(127, 184, 217, 0.12);
       font-family: var(--font-mono);
       font-size: 0.68rem;
       letter-spacing: 0.05em;
+      color: rgba(251, 250, 247, 0.4);
+    }
+
+    /* ── Scroll reveal ──────────────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.65s var(--ease-out), transform 0.65s var(--ease-out);
+    }
+
+    .reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
     }
   </style>
 </head>
 <body>
 
   <header class="site-nav">
-    <div class="wrap site-nav__inner">
+    <div class="site-nav__inner">
       <a href="#" class="site-nav__logo" aria-label="3D Mania Madrid — inicio">
-        <span class="site-nav__mark" aria-hidden="true"></span>
-        3D MANIA MADRID
+        <img
+          src="logo3dmania-icono.png"
+          alt="3D Mania Madrid"
+          width="402"
+          height="413"
+          decoding="async"
+          fetchpriority="high"
+        >
       </a>
       <nav aria-label="Principal">
         <ul class="site-nav__links">
-          <li><a href="#servicio">Servicio</a></li>
           <li><a href="#proceso">Proceso</a></li>
+          <li><a href="#ventajas">Servicio</a></li>
           <li><a href="#contacto">Contacto</a></li>
         </ul>
       </nav>
-      <a href="mailto:3dmaniamadrid@gmail.com" class="site-nav__cta">Pedir presupuesto</a>
+      <a href="#proceso" class="site-nav__cta">Pedir presupuesto</a>
     </div>
   </header>
 
   <main>
 
-    <section class="hero" aria-labelledby="hero-title">
-      <div class="wrap hero__grid">
-
-        <div class="hero__content">
-          <p class="hero__eyebrow">Impresión 3D · Madrid</p>
-          <h1 class="hero__title" id="hero-title">
-            Tienes el diseño.<br>Nosotros lo imprimimos.
-          </h1>
-          <p class="hero__subtitle">
-            Servicio de impresión 3D en Madrid para cualquiera con una idea,
-            un archivo o un proyecto que quiera convertir en un objeto real:
-            estudiantes, makers, particulares, regalos, prototipos o piezas
-            de repuesto — maquetas de arquitectura incluidas.
-          </p>
-          <div class="hero__actions">
-            <a href="mailto:3dmaniamadrid@gmail.com" class="btn btn--primary">Enviar archivo .STL</a>
-            <a href="tel:+34633586174" class="btn btn--ghost">633 58 61 74</a>
-          </div>
-          <ul class="hero__specs" aria-label="Datos rápidos">
-            <li>Desde 0,05 mm por capa</li>
-            <li>PLA y PETG</li>
-            <li>Recogida en Madrid</li>
-          </ul>
-        </div>
-
-        <div class="hero__visual" aria-hidden="true">
-          <svg class="vase-svg" viewBox="0 0 200 260" xmlns="http://www.w3.org/2000/svg">
-            <line class="print-head" x1="28" y1="32" x2="172" y2="32" pathLength="1"/>
-            <ellipse class="vase-layer" cx="100" cy="250" rx="32" ry="4.5" pathLength="1"/>
-            <ellipse class="vase-layer" cx="100" cy="241" rx="34" ry="4.5" pathLength="1"/>
-            <ellipse class="vase-layer" cx="100" cy="232" rx="36" ry="4.5" pathLength="1"/>
-            <ellipse class="vase-layer" cx="100" cy="223" rx="38" ry="4.5" pathLength="1"/>
-            <ellipse class="vase-layer" cx="100" cy="214" rx="40" ry="4.5" pathLength="1"/>
-            <ellipse class="vase-layer" cx="100" cy="205" rx="42" ry="4.5" pathLength="1"/>
-            <ellipse class="vase-layer" cx="100" cy="196" rx="44" ry="4.5" pathLength="1"/>
-            <ellipse class="vase-layer" cx="100" cy="187" rx="46" ry="4.5" pathLength="1"/>
-            <ellipse class="vase-layer" cx="100" cy="178" rx="48" ry="4.5" pathLength="1"/>
-            <ellipse class="vase-layer" cx="100" cy="169" rx="50" ry="4.5" pathLength="1"/>
-            <ellipse class="vase-layer" cx="100" cy="160" rx="51" ry="4.5" pathLength="1"/>
-            <ellipse class="vase-layer" cx="100" cy="151" rx="51" ry="4.5" pathLength="1"/>
-            <ellipse class="vase-layer" cx="100" cy="142" rx="50" ry="4.5" pathLength="1"/>
-            <ellipse class="vase-layer" cx="100" cy="133" rx="48" ry="4.5" pathLength="1"/>
-            <ellipse class="vase-layer" cx="100" cy="124" rx="45" ry="4.5" pathLength="1"/>
-            <ellipse class="vase-layer" cx="100" cy="115" rx="41" ry="4.5" pathLength="1"/>
-            <ellipse class="vase-layer" cx="100" cy="106" rx="36" ry="4.5" pathLength="1"/>
-            <ellipse class="vase-layer" cx="100" cy="97"  rx="30" ry="4.5" pathLength="1"/>
-            <ellipse class="vase-layer" cx="100" cy="88"  rx="24" ry="4.5" pathLength="1"/>
-            <ellipse class="vase-layer" cx="100" cy="79"  rx="20" ry="4.5" pathLength="1"/>
-            <ellipse class="vase-layer" cx="100" cy="70"  rx="19" ry="4.5" pathLength="1"/>
-            <ellipse class="vase-layer" cx="100" cy="61"  rx="20" ry="4.5" pathLength="1"/>
-            <ellipse class="vase-layer" cx="100" cy="52"  rx="22" ry="4.5" pathLength="1"/>
-            <ellipse class="vase-layer" cx="100" cy="43"  rx="24" ry="4.5" pathLength="1"/>
-            <ellipse class="vase-layer" cx="100" cy="34"  rx="26" ry="4.5" pathLength="1"/>
-          </svg>
-        </div>
-
+    <header class="intro wrap">
+      <div class="intro__logo">
+        <img
+          src="logo3dmania-completo.png"
+          alt="3D Mania Madrid"
+          width="745"
+          height="788"
+          decoding="async"
+        >
       </div>
-    </section>
+      <h1 class="intro__title">Impresión 3D en Madrid</h1>
+    </header>
 
-    <div class="divider wrap" role="presentation" aria-hidden="true">
-      <div class="divider__track">
-        <span class="divider__tick"></span>
-        <span class="divider__rail"></span>
-        <span class="divider__label">Servicio</span>
-        <span class="divider__rail"></span>
-        <span class="divider__tick"></span>
-      </div>
-    </div>
-
-    <section class="section-servicio" id="servicio" aria-labelledby="servicio-title">
+    <section class="section-proceso" id="proceso" aria-labelledby="proceso-heading">
       <div class="wrap">
-        <header class="section-head reveal">
-          <h2 class="section-head__title" id="servicio-title">Servicio</h2>
-          <p class="section-head__lead">
-            Imprimimos tu pieza con una Bambu Lab P2S. Da igual si es una
-            maqueta, un regalo, un prototipo o una pieza que necesitas
-            reemplazar: envíanos tu archivo y nos encargamos del resto.
-          </p>
-        </header>
-        <dl class="spec-sheet reveal reveal--delay-1">
-          <div class="spec-sheet__row">
-            <dt class="spec-sheet__label">Volumen de impresión</dt>
-            <dd class="spec-sheet__value">256 × 256 × 256 mm</dd>
-          </div>
-          <div class="spec-sheet__row">
-            <dt class="spec-sheet__label">Resolución de capa</dt>
-            <dd class="spec-sheet__value">Desde 0,05 mm</dd>
-          </div>
-          <div class="spec-sheet__row">
-            <dt class="spec-sheet__label">Materiales</dt>
-            <dd class="spec-sheet__value">PLA y PETG</dd>
-          </div>
-          <div class="spec-sheet__row">
-            <dt class="spec-sheet__label">Formato de archivo</dt>
-            <dd class="spec-sheet__value">.STL</dd>
-          </div>
-        </dl>
-      </div>
-    </section>
+        <h2 class="visually-hidden" id="proceso-heading">Cómo funciona</h2>
+        <ol class="process-list">
 
-    <div class="divider wrap" role="presentation" aria-hidden="true">
-      <div class="divider__track">
-        <span class="divider__tick"></span>
-        <span class="divider__rail"></span>
-        <span class="divider__label">Proceso</span>
-        <span class="divider__rail"></span>
-        <span class="divider__tick"></span>
-      </div>
-    </div>
-
-    <section class="section-proceso" id="proceso" aria-labelledby="proceso-title">
-      <div class="wrap">
-        <header class="section-head reveal">
-          <h2 class="section-head__title" id="proceso-title">Proceso</h2>
-        </header>
-        <ol class="process-list reveal reveal--delay-1">
-          <li class="process-step">
+          <li class="process-step reveal">
             <div class="process-step__num-col">
+              <span class="process-step__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M8 17h8"/>
+                  <path d="M12 14V6"/>
+                  <path d="M9 9l3-3 3 3"/>
+                  <path d="M5 19h14a1 1 0 001-1v-4a1 1 0 00-1-1H5a1 1 0 00-1 1v4a1 1 0 001 1z"/>
+                </svg>
+              </span>
               <span class="process-step__num">01</span>
               <span class="process-step__tick" aria-hidden="true"></span>
             </div>
             <div class="process-step__body">
-              <h3 class="process-step__title">Pide presupuesto</h3>
+              <h3 class="process-step__title">Sube tu archivo</h3>
               <p class="process-step__text">
-                Envíanos tu archivo en formato .STL a
-                <a href="mailto:3dmaniamadrid@gmail.com">3dmaniamadrid@gmail.com</a>.
-                Si tienes dudas antes, llama al
-                <a href="tel:+34633586174">633 58 61 74</a>; si no contestamos,
-                escríbenos por WhatsApp al
-                <a href="https://wa.me/34633586174" target="_blank" rel="noopener noreferrer">mismo número</a>.
+                Sube tu archivo en formato .STL y cuéntanos qué necesitas. Te
+                enviamos un presupuesto, normalmente en un par de horas, máximo 12.
               </p>
+
+              <form
+                class="upload-form"
+                id="upload-form"
+                autocomplete="off"
+                novalidate
+              >
+                <input type="hidden" name="access_key" value="eb6c718a-45fc-4c89-82b9-d42be0db88e9">
+
+                <div class="form-field form-field--file" id="field-archivo">
+                  <label class="form-label" for="archivo">Archivo .STL</label>
+                  <div class="form-file">
+                    <input
+                      class="form-file__input"
+                      type="file"
+                      id="archivo"
+                      name="archivo"
+                      accept=".stl"
+                      required
+                    >
+                    <label class="form-file__label" for="archivo">
+                      <svg class="form-file__icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M12 16V4M12 4L8 8M12 4L16 8"/>
+                        <path d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2"/>
+                      </svg>
+                      <span class="form-file__prompt">Selecciona tu archivo .STL</span>
+                      <span class="form-file__hint">Solo archivos .STL</span>
+                    </label>
+                  </div>
+                  <span class="form-file__name" id="file-name" aria-live="polite"></span>
+                  <span class="form-error" id="error-archivo" hidden>Selecciona un archivo .STL válido.</span>
+                </div>
+
+                <div class="form-field" id="field-nombre">
+                  <label class="form-label" for="nombre">Nombre</label>
+                  <input class="form-input" type="text" id="nombre" name="nombre" required autocomplete="off">
+                  <span class="form-error" id="error-nombre" hidden>Indica tu nombre.</span>
+                </div>
+
+                <div class="form-field" id="field-email">
+                  <label class="form-label" for="email">Email</label>
+                  <input class="form-input" type="email" id="email" name="email" required autocomplete="off">
+                  <span class="form-error" id="error-email" hidden>Indica un email válido.</span>
+                </div>
+
+                <div class="form-field" id="field-telefono">
+                  <label class="form-label" for="telefono">Móvil</label>
+                  <input
+                    class="form-input"
+                    type="tel"
+                    id="telefono"
+                    name="telefono"
+                    required
+                    pattern="^[67][0-9]{8}$"
+                    title="Introduce un móvil válido de 9 dígitos que empiece por 6 o 7"
+                    autocomplete="off"
+                    inputmode="numeric"
+                  >
+                  <span class="form-error" id="error-telefono" hidden>Introduce un móvil válido de 9 dígitos que empiece por 6 o 7.</span>
+                </div>
+
+                <div class="form-field">
+                  <label class="form-label" for="comentarios">Comentarios <span>(opcional)</span></label>
+                  <textarea class="form-textarea" id="comentarios" name="comentarios" rows="3" autocomplete="off"></textarea>
+                </div>
+
+                <div class="form-status form-status--error form-validation-summary" id="form-validation-summary" role="alert" hidden></div>
+
+                <button class="btn-submit" type="submit" id="submit-btn">Enviar archivo</button>
+
+                <div class="form-status form-status--success" id="form-success" role="status" aria-live="polite" hidden>
+                  Archivo enviado correctamente. Te contestamos en menos de 24 horas, normalmente antes.
+                </div>
+                <div class="form-status form-status--error" id="form-error" role="alert" hidden>
+                  No se pudo enviar. Inténtalo de nuevo o escríbenos a
+                  <a href="mailto:3dmaniamadrid@gmail.com">3dmaniamadrid@gmail.com</a>.
+                </div>
+              </form>
             </div>
           </li>
-          <li class="process-step">
+
+          <li class="process-step reveal">
             <div class="process-step__num-col">
+              <span class="process-step__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="3" y="6" width="18" height="13" rx="1"/>
+                  <path d="M3 8l9 6 9-6"/>
+                  <path d="M16 14l2 2"/>
+                  <path d="M18 16l2-2"/>
+                </svg>
+              </span>
               <span class="process-step__num">02</span>
               <span class="process-step__tick" aria-hidden="true"></span>
             </div>
             <div class="process-step__body">
               <h3 class="process-step__title">Recibe tu presupuesto</h3>
               <p class="process-step__text">
-                Revisamos tu pieza y te enviamos el presupuesto por correo,
-                sin compromiso.
+                Te lo enviamos por WhatsApp, normalmente en pocas horas.
               </p>
             </div>
           </li>
-          <li class="process-step">
+
+          <li class="process-step reveal">
             <div class="process-step__num-col">
+              <span class="process-step__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M5 6h14a1 1 0 011 1v7a1 1 0 01-1 1H9l-3 3V7a1 1 0 011-1z"/>
+                  <path d="M9 11l2 2 4-4"/>
+                </svg>
+              </span>
               <span class="process-step__num">03</span>
               <span class="process-step__tick" aria-hidden="true"></span>
             </div>
             <div class="process-step__body">
-              <h3 class="process-step__title">Confirmas y la imprimimos</h3>
+              <h3 class="process-step__title">Confirma</h3>
               <p class="process-step__text">
-                Aceptas el presupuesto y ponemos la impresora en marcha
-                para tu pieza.
+                Acepta el presupuesto respondiendo a nuestro WhatsApp o llamándonos al
+                <a href="tel:+34633586174">633 58 61 74</a>.
               </p>
             </div>
           </li>
-          <li class="process-step">
+
+          <li class="process-step reveal">
             <div class="process-step__num-col">
+              <span class="process-step__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M5 18h14"/>
+                  <ellipse cx="12" cy="15" rx="7" ry="1.5"/>
+                  <ellipse cx="12" cy="12" rx="6" ry="1.5"/>
+                  <ellipse cx="12" cy="9" rx="5" ry="1.5"/>
+                  <line class="icon-accent" x1="6" y1="6" x2="18" y2="6"/>
+                  <path d="M10 6h4v2h-4z"/>
+                </svg>
+              </span>
               <span class="process-step__num">04</span>
               <span class="process-step__tick" aria-hidden="true"></span>
             </div>
             <div class="process-step__body">
-              <h3 class="process-step__title">Recoges tu pieza</h3>
+              <h3 class="process-step__title">Lo producimos</h3>
               <p class="process-step__text">
-                Te avisamos en cuanto esté lista. Recogida en
-                Calle Evangelina Sobredo Galanes, 40E, Madrid.
+                Ponemos la impresora en marcha para tu pieza.
               </p>
             </div>
           </li>
+
+          <li class="process-step reveal">
+            <div class="process-step__num-col">
+              <span class="process-step__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 21s-6-5.2-6-9.5a6 6 0 1112 0C18 15.8 12 21 12 21z"/>
+                  <circle cx="12" cy="11.5" r="2"/>
+                </svg>
+              </span>
+              <span class="process-step__num">05</span>
+              <span class="process-step__tick" aria-hidden="true"></span>
+            </div>
+            <div class="process-step__body">
+              <h3 class="process-step__title">Recógela</h3>
+              <p class="process-step__text">
+                Te avisamos en cuanto esté lista. Recogida en Calle Evangelina
+                Sobredo Galanes, 40E, Madrid.
+              </p>
+            </div>
+          </li>
+
         </ol>
       </div>
     </section>
 
-    <div class="divider wrap" role="presentation" aria-hidden="true">
-      <div class="divider__track">
-        <span class="divider__tick"></span>
-        <span class="divider__rail"></span>
-        <span class="divider__label">Contacto</span>
-        <span class="divider__rail"></span>
-        <span class="divider__tick"></span>
-      </div>
-    </div>
+    <section class="section-ventajas" id="ventajas" aria-labelledby="ventajas-heading">
+      <div class="wrap wrap--wide">
+        <h2 class="visually-hidden" id="ventajas-heading">Por qué elegirnos</h2>
+        <div class="ventajas-grid">
 
-    <section class="section-contacto" id="contacto" aria-labelledby="contacto-title">
-      <div class="wrap">
-        <header class="section-head reveal">
-          <h2 class="section-head__title" id="contacto-title">Contacto</h2>
-        </header>
-        <div class="contact-grid">
-          <ul class="contact-list reveal reveal--delay-1">
-            <li class="contact-list__item">
-              <span class="contact-list__label">Email</span>
-              <span class="contact-list__value">
-                <a href="mailto:3dmaniamadrid@gmail.com">3dmaniamadrid@gmail.com</a>
-              </span>
-            </li>
-            <li class="contact-list__item">
-              <span class="contact-list__label">Teléfono y WhatsApp</span>
-              <span class="contact-list__value">
-                <a href="tel:+34633586174">633 58 61 74</a>
-                ·
-                <a href="https://wa.me/34633586174" target="_blank" rel="noopener noreferrer">WhatsApp</a>
-              </span>
-            </li>
-            <li class="contact-list__item">
-              <span class="contact-list__label">Recogida</span>
-              <span class="contact-list__value">
-                Calle Evangelina Sobredo Galanes, 40E, Madrid
-              </span>
-              <span class="contact-list__note">Bajo cita previa tras confirmar presupuesto.</span>
-            </li>
-          </ul>
-          <aside class="contact-aside reveal reveal--delay-2" aria-labelledby="antes-de-escribir">
-            <h3 class="contact-aside__title" id="antes-de-escribir">Antes de escribir</h3>
-            <ul class="contact-aside__list">
-              <li>Archivo .STL (un objeto por archivo)</li>
-              <li>Indicar material si hay preferencia (PLA o PETG)</li>
-              <li>Indicar si hay prisa de entrega</li>
-            </ul>
-          </aside>
+          <article class="ventaja reveal">
+            <svg class="ventaja__icon" viewBox="0 0 40 40" aria-hidden="true">
+              <rect x="6" y="28" width="28" height="6" rx="1"/>
+              <ellipse cx="20" cy="22" rx="14" ry="3"/>
+              <ellipse cx="20" cy="16" rx="12" ry="3"/>
+              <ellipse cx="20" cy="10" rx="9" ry="2.5"/>
+              <line class="accent" x1="6" y1="10" x2="34" y2="10"/>
+            </svg>
+            <h3 class="ventaja__title">Máxima calidad</h3>
+            <p class="ventaja__text">
+              Impresión con la Bambu Lab P2S, resolución de capa desde 0,05 mm.
+            </p>
+          </article>
+
+          <article class="ventaja reveal">
+            <svg class="ventaja__icon" viewBox="0 0 40 40" aria-hidden="true">
+              <circle cx="20" cy="14" r="6"/>
+              <path d="M8 34c0-6.627 5.373-12 12-12s12 5.373 12 12"/>
+              <path d="M28 18h6M31 15v6"/>
+            </svg>
+            <h3 class="ventaja__title">Asesoramiento personalizado</h3>
+            <p class="ventaja__text">
+              Te ayudamos a elegir material y ajustes antes de imprimir, no solo a ejecutar el archivo.
+            </p>
+          </article>
+
+          <article class="ventaja reveal">
+            <svg class="ventaja__icon" viewBox="0 0 40 40" aria-hidden="true">
+              <circle cx="20" cy="20" r="14"/>
+              <path d="M20 10v10l7 4"/>
+              <path d="M30 6l3 3M34 14h-4"/>
+            </svg>
+            <h3 class="ventaja__title">Agilidad</h3>
+            <p class="ventaja__text">
+              Presupuesto en horas y producción rápida, sin colas de fabricación en serie.
+            </p>
+          </article>
+
         </div>
       </div>
     </section>
 
   </main>
 
-  <footer class="site-footer">
-    <div class="wrap site-footer__inner">
-      <span>&copy; 2026 3D Mania Madrid</span>
-      <span>Madrid, España</span>
+  <footer class="site-footer" id="contacto">
+    <div class="site-footer__inner">
+      <div class="site-footer__top">
+        <div class="site-footer__brand">
+          <img
+            src="logo3dmania-completo.png"
+            alt="3D Mania Madrid"
+            width="745"
+            height="788"
+            decoding="async"
+          >
+        </div>
+        <div class="site-footer__contact">
+          <div>
+            <span class="site-footer__label">Email</span>
+            <p class="site-footer__value">
+              <a href="mailto:3dmaniamadrid@gmail.com">3dmaniamadrid@gmail.com</a>
+            </p>
+          </div>
+          <div>
+            <span class="site-footer__label">Teléfono / WhatsApp</span>
+            <p class="site-footer__value">
+              <a href="tel:+34633586174">633 58 61 74</a>
+              ·
+              <a href="https://wa.me/34633586174" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+            </p>
+          </div>
+          <div>
+            <span class="site-footer__label">Dirección</span>
+            <p class="site-footer__value">
+              Calle Evangelina Sobredo Galanes, 40E, Madrid
+            </p>
+          </div>
+        </div>
+      </div>
+      <p class="site-footer__copy">&copy; 2026 3D Mania Madrid</p>
     </div>
   </footer>
 
   <script>
     (function () {
+      /* Scroll reveal */
       var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (prefersReduced) return;
-
-      var reveals = document.querySelectorAll('.reveal');
-      if (!reveals.length || !('IntersectionObserver' in window)) {
-        reveals.forEach(function (el) { el.classList.add('is-visible'); });
-        return;
+      if (!prefersReduced && 'IntersectionObserver' in window) {
+        var reveals = document.querySelectorAll('.reveal');
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-visible');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.1, rootMargin: '0px 0px -24px 0px' });
+        reveals.forEach(function (el) { observer.observe(el); });
+      } else {
+        document.querySelectorAll('.reveal').forEach(function (el) {
+          el.classList.add('is-visible');
+        });
       }
 
-      var observer = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('is-visible');
-            observer.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.12, rootMargin: '0px 0px -32px 0px' });
+      /* File input display */
+      var fileInput = document.getElementById('archivo');
+      var fileNameEl = document.getElementById('file-name');
 
-      reveals.forEach(function (el) { observer.observe(el); });
+      fileInput.addEventListener('change', function () {
+        var file = fileInput.files[0];
+        fileNameEl.textContent = file ? file.name : '';
+      });
+
+      /* Form submission */
+      var form = document.getElementById('upload-form');
+      var submitBtn = document.getElementById('submit-btn');
+      var successEl = document.getElementById('form-success');
+      var errorEl = document.getElementById('form-error');
+      var validationSummary = document.getElementById('form-validation-summary');
+      var telefonoInput = document.getElementById('telefono');
+      var web3formsUrl = 'https://api.web3forms.com/submit';
+
+      function isValidStl(file) {
+        if (!file) return false;
+        return file.name.toLowerCase().endsWith('.stl');
+      }
+
+      function isValidEmail(value) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+      }
+
+      function normalizePhone(value) {
+        return value.replace(/\D/g, '');
+      }
+
+      function isValidPhone(value) {
+        return /^[67][0-9]{8}$/.test(normalizePhone(value));
+      }
+
+      function setFieldError(fieldId, errorId, show, message) {
+        var field = document.getElementById(fieldId);
+        var error = document.getElementById(errorId);
+        if (message) error.textContent = message;
+        if (show) {
+          field.classList.add('form-field--error');
+          error.hidden = false;
+        } else {
+          field.classList.remove('form-field--error');
+          error.hidden = true;
+        }
+      }
+
+      function clearAllErrors() {
+        setFieldError('field-archivo', 'error-archivo', false);
+        setFieldError('field-nombre', 'error-nombre', false);
+        setFieldError('field-email', 'error-email', false);
+        setFieldError('field-telefono', 'error-telefono', false);
+        validationSummary.hidden = true;
+        validationSummary.textContent = '';
+      }
+
+      function validateForm() {
+        clearAllErrors();
+
+        var file = fileInput.files[0];
+        var nombre = document.getElementById('nombre').value.trim();
+        var email = document.getElementById('email').value.trim();
+        var telefono = telefonoInput.value.trim();
+        var missing = [];
+        var firstErrorField = null;
+
+        if (!file) {
+          setFieldError('field-archivo', 'error-archivo', true, 'Selecciona un archivo .STL.');
+          missing.push('archivo .STL');
+          firstErrorField = firstErrorField || document.getElementById('field-archivo');
+        } else if (!isValidStl(file)) {
+          setFieldError('field-archivo', 'error-archivo', true, 'El archivo debe tener extensión .STL.');
+          missing.push('archivo .STL válido');
+          firstErrorField = firstErrorField || document.getElementById('field-archivo');
+        }
+
+        if (!nombre) {
+          setFieldError('field-nombre', 'error-nombre', true, 'Indica tu nombre.');
+          missing.push('nombre');
+          firstErrorField = firstErrorField || document.getElementById('field-nombre');
+        }
+
+        if (!email) {
+          setFieldError('field-email', 'error-email', true, 'Indica tu email.');
+          missing.push('email');
+          firstErrorField = firstErrorField || document.getElementById('field-email');
+        } else if (!isValidEmail(email)) {
+          setFieldError('field-email', 'error-email', true, 'Indica un email válido.');
+          missing.push('email válido');
+          firstErrorField = firstErrorField || document.getElementById('field-email');
+        }
+
+        if (!telefono) {
+          setFieldError('field-telefono', 'error-telefono', true, 'Indica tu teléfono móvil.');
+          missing.push('teléfono');
+          firstErrorField = firstErrorField || document.getElementById('field-telefono');
+        } else if (!isValidPhone(telefono)) {
+          setFieldError(
+            'field-telefono',
+            'error-telefono',
+            true,
+            'Introduce un móvil válido de 9 dígitos que empiece por 6 o 7.'
+          );
+          missing.push('teléfono válido');
+          firstErrorField = firstErrorField || document.getElementById('field-telefono');
+        }
+
+        if (missing.length) {
+          validationSummary.textContent = missing.length === 1
+            ? 'Falta completar: ' + missing[0] + '.'
+            : 'Faltan por completar: ' + missing.join(', ') + '.';
+          validationSummary.hidden = false;
+          if (firstErrorField) {
+            firstErrorField.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'nearest' });
+          }
+          return false;
+        }
+
+        return true;
+      }
+
+      ['input', 'change'].forEach(function (evt) {
+        form.addEventListener(evt, function (e) {
+          if (!e.target.closest('.form-field')) return;
+          clearAllErrors();
+        });
+      });
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        successEl.hidden = true;
+        errorEl.hidden = true;
+
+        if (!validateForm()) return;
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Enviando…';
+
+        var formData = new FormData(form);
+        formData.set('telefono', normalizePhone(telefonoInput.value));
+
+        fetch(web3formsUrl, {
+          method: 'POST',
+          body: formData
+        })
+          .then(function (response) {
+            return response.json();
+          })
+          .then(function (data) {
+            if (data.success) {
+              form.reset();
+              fileNameEl.textContent = '';
+              clearAllErrors();
+              successEl.hidden = false;
+              successEl.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'nearest' });
+            } else {
+              throw new Error(data.message || 'Error al enviar');
+            }
+          })
+          .catch(function () {
+            errorEl.hidden = false;
+            errorEl.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'nearest' });
+          })
+          .finally(function () {
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Enviar archivo';
+          });
+      });
     })();
   </script>
 
