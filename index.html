@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Mania Madrid — Impresión 3D en Madrid</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --color-bg: #f8f9fa;
+      --color-surface: #ffffff;
+      --color-text: #1a1a2e;
+      --color-muted: #5a5a72;
+      --color-accent: #e63946;
+      --color-accent-dark: #c1121f;
+      --max-width: 720px;
+      --radius: 12px;
+      --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    body {
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: var(--color-bg);
+      color: var(--color-text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 2rem 1.25rem 3rem;
+    }
+
+    /* Header / Logo */
+    header {
+      text-align: center;
+      padding: 2.5rem 0 2rem;
+    }
+
+    .logo {
+      font-size: clamp(1.75rem, 5vw, 2.5rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--color-text);
+    }
+
+    .logo span {
+      color: var(--color-accent);
+    }
+
+    .tagline {
+      margin-top: 0.75rem;
+      font-size: clamp(1rem, 2.5vw, 1.15rem);
+      color: var(--color-muted);
+      max-width: 32ch;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Sections */
+    section {
+      background: var(--color-surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 1.75rem 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    section h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.25rem;
+      color: var(--color-text);
+    }
+
+    /* How it works */
+    .steps {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .steps li {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .step-number {
+      flex-shrink: 0;
+      width: 2rem;
+      height: 2rem;
+      background: var(--color-accent);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .step-content strong {
+      display: block;
+      margin-bottom: 0.15rem;
+    }
+
+    .step-content p {
+      color: var(--color-muted);
+      font-size: 0.95rem;
+    }
+
+    /* Contact */
+    .contact p {
+      color: var(--color-muted);
+      margin-bottom: 0.75rem;
+    }
+
+    .contact a {
+      display: inline-block;
+      color: var(--color-accent);
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 1.05rem;
+      word-break: break-all;
+    }
+
+    .contact a:hover {
+      color: var(--color-accent-dark);
+      text-decoration: underline;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 1.5rem 0 0.5rem;
+      font-size: 0.85rem;
+      color: var(--color-muted);
+    }
+
+    @media (min-width: 600px) {
+      .container {
+        padding: 3rem 2rem 4rem;
+      }
+
+      section {
+        padding: 2rem 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1 class="logo">3D Mania <span>Madrid</span></h1>
+      <p class="tagline">
+        Impresión 3D en Madrid para estudiantes de arquitectura y particulares.
+        Materializamos tus maquetas y proyectos con rapidez y calidad.
+      </p>
+    </header>
+
+    <section aria-labelledby="como-funciona">
+      <h2 id="como-funciona">Cómo funciona</h2>
+      <ol class="steps">
+        <li>
+          <span class="step-number" aria-hidden="true">1</span>
+          <div class="step-content">
+            <strong>Sube tu diseño</strong>
+            <p>Envíanos tu archivo 3D (STL, OBJ u otros formatos habituales).</p>
+          </div>
+        </li>
+        <li>
+          <span class="step-number" aria-hidden="true">2</span>
+          <div class="step-content">
+            <strong>Te damos presupuesto</strong>
+            <p>Revisamos tu pieza y te enviamos un presupuesto sin compromiso.</p>
+          </div>
+        </li>
+        <li>
+          <span class="step-number" aria-hidden="true">3</span>
+          <div class="step-content">
+            <strong>Recoges o te enviamos la pieza</strong>
+            <p>Imprimimos tu proyecto y lo recoges en Madrid o te lo enviamos a domicilio.</p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <section class="contact" aria-labelledby="contacto">
+      <h2 id="contacto">Contacto</h2>
+      <p>¿Tienes un proyecto en mente? Escríbenos y te respondemos lo antes posible.</p>
+      <a href="mailto:3dmaniamadrid@gmail.com">3dmaniamadrid@gmail.com</a>
+    </section>
+
+    <footer>
+      <p>&copy; 2026 3D Mania Madrid</p>
+    </footer>
+  </div>
+</body>
+</html>
