@@ -203,14 +203,14 @@
   .dropzone {
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
     border: 1.5px dashed var(--hairline); border-radius: 4px; background: var(--soft);
-    padding: 26px 18px; text-align: center; cursor: pointer;
+    padding: clamp(32px, 4vw, 36px) 18px; text-align: center; cursor: pointer;
     transition: border-color 0.2s ease, background 0.2s ease;
   }
   .dropzone:hover { border-color: var(--cyan); background: rgba(79,163,209,0.06); }
   .file-input-hidden:focus-visible + .dropzone { outline: 2px solid var(--orange); outline-offset: 3px; }
-  .dropzone svg { width: 26px; height: 26px; stroke: var(--navy); }
-  .dropzone .main-txt { font-weight: 600; font-size: 0.96rem; }
-  .dropzone .sub-txt { color: var(--graphite); font-size: 0.82rem; }
+  .dropzone svg { width: 32px; height: 32px; stroke: var(--navy); flex-shrink: 0; }
+  .dropzone .main-txt { display: block; font-weight: 600; font-size: 0.96rem; line-height: 1.35; }
+  .dropzone .sub-txt { display: block; color: var(--graphite); font-size: 0.82rem; line-height: 1.4; }
   .file-name {
     font-family: var(--mono); font-size: 0.76rem; color: var(--navy); margin-top: 8px;
     word-break: break-all;
@@ -338,8 +338,8 @@
             <input type="file" id="archivo" name="archivo" accept=".stl,.3dm,.jpg,.jpeg,.png" required class="file-input-hidden">
             <label for="archivo" class="dropzone">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
-              <span class="main-txt" id="dzText">Selecciona tu archivo .STL</span>
-              <span class="sub-txt">STL, 3DM, JPG o PNG · máximo 10 MB</span>
+              <span class="main-txt" id="dzText">Selecciona o arrastra tu archivo</span>
+              <span class="sub-txt">STL, 3DM, JPG o PNG — máximo 10 MB</span>
             </label>
             <div class="file-name" id="fileNameShown" aria-live="polite"></div>
             <div class="err" id="errArchivo">Selecciona un archivo .STL, .3DM, .JPG o .PNG de menos de 10 MB.</div>
@@ -497,7 +497,7 @@
       dzText.textContent = 'Archivo seleccionado';
       fileNameShown.textContent = f.name;
     } else {
-      dzText.textContent = 'Selecciona tu archivo .STL';
+      dzText.textContent = 'Selecciona o arrastra tu archivo';
       fileNameShown.textContent = '';
     }
   });
@@ -593,7 +593,7 @@
       return fetch(GAS_URL, { method: 'POST', mode: 'no-cors', body: fd });
     }).then(function () {
       form.reset();
-      dzText.textContent = 'Selecciona tu archivo .STL';
+      dzText.textContent = 'Selecciona o arrastra tu archivo';
       fileNameShown.textContent = '';
       formSuccess.classList.add('show');
       formSuccess.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'nearest' });
