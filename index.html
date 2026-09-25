@@ -117,34 +117,20 @@
       var(--white);
     padding: clamp(48px, 8vw, 88px) 0 clamp(30px, 5vw, 50px);
   }
-  .hero-cursor-glow {
+  .hero-dots {
     display: none;
     position: absolute;
-    width: 560px;
-    height: 560px;
-    border-radius: 50%;
-    left: 0;
-    top: 0;
-    margin: 0;
-    pointer-events: none;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     z-index: 0;
-    background: radial-gradient(
-      circle,
-      rgba(79, 163, 209, 0.14) 0%,
-      rgba(225, 90, 44, 0.09) 32%,
-      transparent 68%
-    );
-    filter: blur(60px);
-    opacity: 0;
-    will-change: transform;
-    transition: opacity 0.45s ease;
+    pointer-events: none;
   }
-  .hero.is-glow-active .hero-cursor-glow { opacity: 1; }
   @media (pointer: fine) {
-    .hero-cursor-glow { display: block; }
+    .hero-dots { display: block; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .hero-cursor-glow { display: none !important; }
+    .hero-dots { display: none !important; }
   }
   .hero-top {
     position: relative;
@@ -167,47 +153,52 @@
     .hero-brand img.full-logo { width: 190px; }
   }
 
+  /* ================= CUSTOM CURSOR ================= */
+  .cursor-dot,
+  .cursor-ring {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    mix-blend-mode: difference;
+    will-change: transform;
+  }
+  .cursor-dot {
+    width: 8px;
+    height: 8px;
+    margin: -4px 0 0 -4px;
+    background: #4FA3D1;
+  }
+  .cursor-ring {
+    width: 32px;
+    height: 32px;
+    margin: -16px 0 0 -16px;
+    border: 1.5px solid #4FA3D1;
+    background: transparent;
+  }
+  @media (pointer: fine) {
+    body.has-custom-cursor,
+    body.has-custom-cursor * { cursor: none !important; }
+    .cursor-dot,
+    .cursor-ring { display: block; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cursor-dot,
+    .cursor-ring { display: none !important; }
+    body.has-custom-cursor,
+    body.has-custom-cursor * { cursor: auto !important; }
+  }
+
   /* ================= FORM CARD ================= */
   .form-card {
-    position: relative;
     background: var(--white); border-radius: 6px; box-shadow: var(--shadow-card);
     border: 1px solid var(--hairline); overflow: hidden;
-    transform-style: preserve-3d;
     transition: box-shadow 0.35s var(--ease-out);
   }
   .form-card:hover { box-shadow: 0 1px 2px rgba(22,35,63,0.05), 0 26px 60px -12px rgba(22,35,63,0.2); }
-  .form-card.is-tilting {
-    transition: transform 0.1s ease-out, box-shadow 0.35s var(--ease-out);
-  }
-  .form-card.is-tilt-reset {
-    transition: transform 0.4s ease, box-shadow 0.35s var(--ease-out);
-  }
-  .form-card__shine {
-    display: none;
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
-    z-index: 3;
-    background: radial-gradient(
-      circle 220px at var(--shine-x, 50%) var(--shine-y, 50%),
-      rgba(79, 163, 209, 0.16),
-      transparent 55%
-    );
-    opacity: 0;
-    transition: opacity 0.35s ease;
-  }
-  .form-card.is-tilting .form-card__shine { opacity: 1; }
-  @media (pointer: fine) {
-    .form-card__shine { display: block; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .form-card__shine { display: none !important; }
-    .form-card.is-tilting,
-    .form-card.is-tilt-reset { transition: box-shadow 0.35s var(--ease-out); }
-  }
-  .form-card-head,
-  .form-card .upload-form { position: relative; z-index: 1; }
   .form-card-head { padding: clamp(24px,4vw,36px) clamp(24px,4vw,36px) 4px; }
   .step-tag {
     display: inline-flex; align-items: center; gap: 10px;
@@ -381,7 +372,7 @@
 <section id="top">
   <h2 class="visually-hidden">Cómo funciona</h2>
   <div class="hero">
-    <div class="hero-cursor-glow" aria-hidden="true"></div>
+    <canvas class="hero-dots" id="heroDots" aria-hidden="true"></canvas>
     <div class="hero-top">
       <div class="hero-brand reveal">
         <img class="full-logo" src="logo3dmania-completo.png" alt="3D Mania Madrid">
@@ -390,7 +381,6 @@
       </div>
 
       <div class="form-card reveal reveal--delay-1">
-        <div class="form-card__shine" aria-hidden="true"></div>
         <div class="form-card-head">
           <div class="step-tag"><span class="num-badge">01</span>Paso 1</div>
           <h2>Sube tu archivo</h2>
@@ -532,6 +522,9 @@
     </div>
   </div>
 </footer>
+
+<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+<div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
 
 <script>
 (function () {
@@ -682,97 +675,218 @@
   var finePointer = window.matchMedia('(pointer: fine)').matches;
   if (prefersReduced || !finePointer) return;
 
-  /* —— Hero cursor glow —— */
-  var hero = document.querySelector('.hero');
-  var glow = document.querySelector('.hero-cursor-glow');
-  if (hero && glow) {
-    var glowSize = 560;
-    var half = glowSize / 2;
-    var targetX = half;
-    var targetY = half;
-    var currentX = half;
-    var currentY = half;
-    var glowRaf = 0;
-    var glowActive = false;
-    var lerp = 0.085;
+  var CYAN = { r: 79, g: 163, b: 209 };
+  var ORANGE = { r: 225, g: 90, b: 44 };
 
-    function tickGlow() {
-      currentX += (targetX - currentX) * lerp;
-      currentY += (targetY - currentY) * lerp;
-      glow.style.transform = 'translate(' + (currentX - half) + 'px, ' + (currentY - half) + 'px)';
-      glowRaf = requestAnimationFrame(tickGlow);
+  function lerpColor(t) {
+    var r = Math.round(CYAN.r + (ORANGE.r - CYAN.r) * t);
+    var g = Math.round(CYAN.g + (ORANGE.g - CYAN.g) * t);
+    var b = Math.round(CYAN.b + (ORANGE.b - CYAN.b) * t);
+    return 'rgb(' + r + ',' + g + ',' + b + ')';
+  }
+
+  function colorTFromX(clientX) {
+    var w = window.innerWidth || 1;
+    return Math.min(1, Math.max(0, clientX / w));
+  }
+
+  /* —— Custom precision cursor —— */
+  var dot = document.getElementById('cursorDot');
+  var ring = document.getElementById('cursorRing');
+  if (dot && ring) {
+    document.body.classList.add('has-custom-cursor');
+
+    var mouseX = window.innerWidth / 2;
+    var mouseY = window.innerHeight / 2;
+    var ringX = mouseX;
+    var ringY = mouseY;
+    var ringLerp = 0.18;
+    var hovering = false;
+    var interactiveSelector = 'a, button, input, textarea, label, .dropzone, .btn, .submit-btn, [role="button"]';
+
+    function isInteractive(el) {
+      if (!el || el === document.body || el === document.documentElement) return false;
+      return !!(el.closest && el.closest(interactiveSelector));
     }
 
-    hero.addEventListener('mousemove', function (e) {
-      var rect = hero.getBoundingClientRect();
-      targetX = e.clientX - rect.left;
-      targetY = e.clientY - rect.top;
-      if (!glowActive) {
-        glowActive = true;
-        hero.classList.add('is-glow-active');
-        currentX = targetX;
-        currentY = targetY;
-        if (!glowRaf) glowRaf = requestAnimationFrame(tickGlow);
+    window.addEventListener('mousemove', function (e) {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      var nextHover = isInteractive(e.target);
+      if (nextHover !== hovering) {
+        hovering = nextHover;
+        dot.classList.toggle('is-hover', hovering);
+        ring.classList.toggle('is-hover', hovering);
       }
     }, { passive: true });
 
-    hero.addEventListener('mouseleave', function () {
-      hero.classList.remove('is-glow-active');
-      glowActive = false;
+    window.addEventListener('mouseleave', function () {
+      dot.style.opacity = '0';
+      ring.style.opacity = '0';
     });
-  }
+    window.addEventListener('mouseenter', function () {
+      dot.style.opacity = '1';
+      ring.style.opacity = '1';
+    });
 
-  /* —— Form card 3D tilt + shine —— */
-  var card = document.querySelector('.form-card');
-  if (!card) return;
+    function tickCursor() {
+      var t = colorTFromX(mouseX);
+      var color = lerpColor(t);
+      dot.style.backgroundColor = color;
+      ring.style.borderColor = color;
 
-  var maxTilt = 5;
-  var tiltTargetX = 0;
-  var tiltTargetY = 0;
-  var shineX = 50;
-  var shineY = 50;
-  var tiltRaf = 0;
-  var tilting = false;
+      var hoverScaleDot = hovering ? 1.5 : 1;
+      var hoverScaleRing = hovering ? 0.55 : 1;
 
-  function tickTilt() {
-    card.style.transform =
-      'perspective(1000px) rotateX(' + tiltTargetX.toFixed(2) + 'deg) rotateY(' + tiltTargetY.toFixed(2) + 'deg)';
-    card.style.setProperty('--shine-x', shineX.toFixed(1) + '%');
-    card.style.setProperty('--shine-y', shineY.toFixed(1) + '%');
-    tiltRaf = 0;
-  }
+      /* Dot: exact follow, no lerp */
+      dot.style.transform =
+        'translate3d(' + mouseX + 'px,' + mouseY + 'px,0) scale(' + hoverScaleDot + ')';
 
-  function scheduleTilt() {
-    if (!tiltRaf) tiltRaf = requestAnimationFrame(tickTilt);
-  }
+      ringX += (mouseX - ringX) * ringLerp;
+      ringY += (mouseY - ringY) * ringLerp;
+      ring.style.transform =
+        'translate3d(' + ringX + 'px,' + ringY + 'px,0) scale(' + hoverScaleRing + ')';
 
-  card.addEventListener('mousemove', function (e) {
-    var rect = card.getBoundingClientRect();
-    var x = (e.clientX - rect.left) / rect.width;
-    var y = (e.clientY - rect.top) / rect.height;
-    tiltTargetY = (x - 0.5) * (maxTilt * 2);
-    tiltTargetX = (0.5 - y) * (maxTilt * 2);
-    shineX = x * 100;
-    shineY = y * 100;
-
-    if (!tilting) {
-      tilting = true;
-      card.classList.remove('is-tilt-reset');
-      card.classList.add('is-tilting');
+      requestAnimationFrame(tickCursor);
     }
-    scheduleTilt();
+    requestAnimationFrame(tickCursor);
+  }
+
+  /* —— Hero layered dots field —— */
+  var hero = document.querySelector('.hero');
+  var canvas = document.getElementById('heroDots');
+  if (!hero || !canvas) return;
+
+  var ctx = canvas.getContext('2d');
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var layers = [];
+  var pointerX = 0;
+  var pointerY = 0;
+  var hasPointer = false;
+  var targetParallax = [
+    { x: 0, y: 0 },
+    { x: 0, y: 0 },
+    { x: 0, y: 0 }
+  ];
+  var currentParallax = [
+    { x: 0, y: 0 },
+    { x: 0, y: 0 },
+    { x: 0, y: 0 }
+  ];
+  var MAGNET_RADIUS = 140;
+  var parallaxStrength = [6, 14, 26];
+  var parallaxLerp = 0.08;
+
+  function buildLayers(w, h) {
+    layers = [
+      { spacing: 28, baseRadius: 1.4, baseAlpha: 0.09, depth: [] },
+      { spacing: 34, baseRadius: 1.9, baseAlpha: 0.11, dots: [] },
+      { spacing: 42, baseRadius: 2.4, baseAlpha: 0.13, dots: [] }
+    ];
+    for (var li = 0; li < layers.length; li++) {
+      var layer = layers[li];
+      var offset = (li % 2) * (layer.spacing * 0.5);
+      for (var y = offset; y <= h + layer.spacing; y += layer.spacing) {
+        for (var x = offset; x <= w + layer.spacing; x += layer.spacing) {
+          layer.dots.push({ x: x, y: y });
+        }
+      }
+    }
+  }
+
+  function resizeCanvas() {
+    var rect = hero.getBoundingClientRect();
+    var w = Math.max(1, Math.floor(rect.width));
+    var h = Math.max(1, Math.floor(rect.height));
+    canvas.width = Math.floor(w * dpr);
+    canvas.height = Math.floor(h * dpr);
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    buildLayers(w, h);
+  }
+
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
+  hero.addEventListener('mousemove', function (e) {
+    var rect = hero.getBoundingClientRect();
+    pointerX = e.clientX - rect.left;
+    pointerY = e.clientY - rect.top;
+    hasPointer = true;
+
+    var cx = rect.width / 2;
+    var cy = rect.height / 2;
+    var nx = (pointerX - cx) / cx;
+    var ny = (pointerY - cy) / cy;
+    for (var i = 0; i < 3; i++) {
+      targetParallax[i] = {
+        x: -nx * parallaxStrength[i],
+        y: -ny * parallaxStrength[i]
+      };
+    }
   }, { passive: true });
 
-  card.addEventListener('mouseleave', function () {
-    tilting = false;
-    card.classList.remove('is-tilting');
-    card.classList.add('is-tilt-reset');
-    tiltTargetX = 0;
-    tiltTargetY = 0;
-    shineX = 50;
-    shineY = 50;
-    scheduleTilt();
+  hero.addEventListener('mouseleave', function () {
+    hasPointer = false;
+    for (var i = 0; i < 3; i++) {
+      targetParallax[i] = { x: 0, y: 0 };
+    }
   });
+
+  function tickDots() {
+    var rect = hero.getBoundingClientRect();
+    var w = rect.width;
+    var h = rect.height;
+    ctx.clearRect(0, 0, w, h);
+
+    var colorT = colorTFromX(hasPointer ? (rect.left + pointerX) : window.innerWidth / 2);
+    var brandR = CYAN.r + (ORANGE.r - CYAN.r) * colorT;
+    var brandG = CYAN.g + (ORANGE.g - CYAN.g) * colorT;
+    var brandB = CYAN.b + (ORANGE.b - CYAN.b) * colorT;
+
+    for (var li = 0; li < layers.length; li++) {
+      var layer = layers[li];
+      var px = currentParallax[li];
+      var tx = targetParallax[li];
+      px.x += (tx.x - px.x) * parallaxLerp;
+      px.y += (tx.y - px.y) * parallaxLerp;
+
+      for (var di = 0; di < layer.dots.length; di++) {
+        var dotPt = layer.dots[di];
+        var dx = dotPt.x + px.x;
+        var dy = dotPt.y + px.y;
+        var radius = layer.baseRadius;
+        var alpha = layer.baseAlpha;
+        var r = 100;
+        var g = 110;
+        var b = 120;
+
+        if (hasPointer) {
+          var distX = dx - pointerX;
+          var distY = dy - pointerY;
+          var dist = Math.sqrt(distX * distX + distY * distY);
+          if (dist < MAGNET_RADIUS) {
+            var influence = 1 - dist / MAGNET_RADIUS;
+            influence = influence * influence;
+            radius = layer.baseRadius + influence * (2.8 + li * 0.6);
+            alpha = layer.baseAlpha + influence * (0.55 - layer.baseAlpha);
+            r = 100 + (brandR - 100) * influence;
+            g = 110 + (brandG - 110) * influence;
+            b = 120 + (brandB - 120) * influence;
+          }
+        }
+
+        ctx.beginPath();
+        ctx.arc(dx, dy, radius, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(' + Math.round(r) + ',' + Math.round(g) + ',' + Math.round(b) + ',' + alpha + ')';
+        ctx.fill();
+      }
+    }
+
+    requestAnimationFrame(tickDots);
+  }
+  requestAnimationFrame(tickDots);
 })();
 </script>
 
