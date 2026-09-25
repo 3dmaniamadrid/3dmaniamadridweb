@@ -111,13 +111,14 @@
   /* ================= HERO ================= */
   .hero {
     position: relative;
+    overflow: hidden;
     background:
       radial-gradient(ellipse 900px 500px at 15% -10%, rgba(79,163,209,0.10), transparent 60%),
       radial-gradient(ellipse 700px 400px at 100% 10%, rgba(225,90,44,0.07), transparent 60%),
       var(--white);
     padding: clamp(48px, 8vw, 88px) 0 clamp(30px, 5vw, 50px);
   }
-  .hero-dots {
+  .hero-grid {
     display: none;
     position: absolute;
     inset: 0;
@@ -127,10 +128,10 @@
     pointer-events: none;
   }
   @media (pointer: fine) {
-    .hero-dots { display: block; }
+    .hero-grid { display: block; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .hero-dots { display: none !important; }
+    .hero-grid { display: none !important; }
   }
   .hero-top {
     position: relative;
@@ -354,7 +355,7 @@
 <section id="top">
   <h2 class="visually-hidden">Cómo funciona</h2>
   <div class="hero">
-    <canvas class="hero-dots" id="heroDots" aria-hidden="true"></canvas>
+    <canvas class="hero-grid" id="heroGrid" aria-hidden="true"></canvas>
     <div class="hero-top">
       <div class="hero-brand reveal">
         <img class="full-logo" src="logo3dmania-completo.png" alt="3D Mania Madrid">
@@ -789,60 +790,38 @@
     requestAnimationFrame(tickTrail);
   }
 
-  /* —— Hero layered dots field (high visibility) —— */
+  /* —— Hero perspective grid floor —— */
   var hero = document.querySelector('.hero');
-  var canvas = document.getElementById('heroDots');
+  var canvas = document.getElementById('heroGrid');
   if (!hero || !canvas) return;
 
   var ctx = canvas.getContext('2d');
   if (!ctx) return;
 
   var dpr = Math.min(window.devicePixelRatio || 1, 2);
-  var layers = [];
-  var pointerX = 0;
-  var pointerY = 0;
+  var cw = 1;
+  var ch = 1;
+  var pointerX = 0.5;
+  var pointerY = 0.5;
   var hasPointer = false;
-  var targetParallax = [
-    { x: 0, y: 0 },
-    { x: 0, y: 0 },
-    { x: 0, y: 0 }
-  ];
-  var currentParallax = [
-    { x: 0, y: 0 },
-    { x: 0, y: 0 },
-    { x: 0, y: 0 }
-  ];
-  var MAGNET_RADIUS = 150;
-  var parallaxStrength = [8, 16, 28];
-  var parallaxLerp = 0.08;
-
-  function buildLayers(w, h) {
-    layers = [
-      { spacing: 30, baseRadius: 2, baseAlpha: 0.28, dots: [] },
-      { spacing: 36, baseRadius: 3, baseAlpha: 0.36, dots: [] },
-      { spacing: 44, baseRadius: 4.5, baseAlpha: 0.48, dots: [] }
-    ];
-    for (var li = 0; li < layers.length; li++) {
-      var layer = layers[li];
-      var offset = (li % 2) * (layer.spacing * 0.5);
-      for (var y = offset; y <= h + layer.spacing; y += layer.spacing) {
-        for (var x = offset; x <= w + layer.spacing; x += layer.spacing) {
-          layer.dots.push({ x: x, y: y });
-        }
-      }
-    }
-  }
+  var vpOffset = { x: 0, y: 0 };
+  var vpTarget = { x: 0, y: 0 };
+  var vpLerp = 0.06;
+  var MAX_VP_SHIFT = 50;
+  var scrollPhase = 0;
+  var H_LINES = 18;
+  var V_LINES = 22;
+  var FLOW_SPEED = 0.00012;
 
   function resizeCanvas() {
     var rect = hero.getBoundingClientRect();
-    var w = Math.max(1, Math.floor(rect.width));
-    var h = Math.max(1, Math.floor(rect.height));
-    canvas.width = Math.floor(w * dpr);
-    canvas.height = Math.floor(h * dpr);
-    canvas.style.width = w + 'px';
-    canvas.style.height = h + 'px';
+    cw = Math.max(1, Math.floor(rect.width));
+    ch = Math.max(1, Math.floor(rect.height));
+    canvas.width = Math.floor(cw * dpr);
+    canvas.height = Math.floor(ch * dpr);
+    canvas.style.width = cw + 'px';
+    canvas.style.height = ch + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    buildLayers(w, h);
   }
 
   resizeCanvas();
@@ -850,82 +829,154 @@
 
   hero.addEventListener('mousemove', function (e) {
     var rect = hero.getBoundingClientRect();
-    pointerX = e.clientX - rect.left;
-    pointerY = e.clientY - rect.top;
+    var nx = (e.clientX - rect.left) / Math.max(1, rect.width);
+    var ny = (e.clientY - rect.top) / Math.max(1, rect.height);
+    pointerX = nx;
+    pointerY = ny;
     hasPointer = true;
-
-    var cx = Math.max(1, rect.width / 2);
-    var cy = Math.max(1, rect.height / 2);
-    var nx = (pointerX - cx) / cx;
-    var ny = (pointerY - cy) / cy;
-    for (var i = 0; i < 3; i++) {
-      targetParallax[i] = {
-        x: -nx * parallaxStrength[i],
-        y: -ny * parallaxStrength[i]
-      };
-    }
+    vpTarget.x = (nx - 0.5) * 2 * MAX_VP_SHIFT;
+    vpTarget.y = (ny - 0.5) * 2 * (MAX_VP_SHIFT * 0.85);
   }, { passive: true });
 
   hero.addEventListener('mouseleave', function () {
     hasPointer = false;
-    for (var i = 0; i < 3; i++) {
-      targetParallax[i] = { x: 0, y: 0 };
-    }
+    vpTarget.x = 0;
+    vpTarget.y = 0;
   });
 
-  function tickDots() {
-    var rect = hero.getBoundingClientRect();
-    var w = rect.width;
-    var h = rect.height;
-    ctx.clearRect(0, 0, w, h);
+  function lineAlphaAtY(y, vpY) {
+    var floorH = Math.max(1, ch - vpY);
+    var t = Math.min(1, Math.max(0, (y - vpY) / floorH));
+    return 0.065 + t * 0.055;
+  }
 
-    var colorT = colorTFromX(hasPointer ? (rect.left + pointerX) : window.innerWidth / 2);
-    var brandR = CYAN.r + (ORANGE.r - CYAN.r) * colorT;
-    var brandG = CYAN.g + (ORANGE.g - CYAN.g) * colorT;
-    var brandB = CYAN.b + (ORANGE.b - CYAN.b) * colorT;
+  function distToSegment(px, py, x1, y1, x2, y2) {
+    var dx = x2 - x1;
+    var dy = y2 - y1;
+    var len2 = dx * dx + dy * dy;
+    if (len2 < 0.0001) {
+      var ex = px - x1;
+      var ey = py - y1;
+      return Math.sqrt(ex * ex + ey * ey);
+    }
+    var t = ((px - x1) * dx + (py - y1) * dy) / len2;
+    t = Math.max(0, Math.min(1, t));
+    var sx = x1 + t * dx;
+    var sy = y1 + t * dy;
+    var ox = px - sx;
+    var oy = py - sy;
+    return Math.sqrt(ox * ox + oy * oy);
+  }
 
-    for (var li = 0; li < layers.length; li++) {
-      var layer = layers[li];
-      var px = currentParallax[li];
-      var tx = targetParallax[li];
-      px.x += (tx.x - px.x) * parallaxLerp;
-      px.y += (tx.y - px.y) * parallaxLerp;
+  function glowBoost(x1, y1, x2, y2) {
+    if (!hasPointer) return 0;
+    var mx = pointerX * cw;
+    var my = pointerY * ch;
+    var d = distToSegment(mx, my, x1, y1, x2, y2);
+    var radius = 110;
+    if (d >= radius) return 0;
+    var u = 1 - d / radius;
+    return u * u;
+  }
 
-      for (var di = 0; di < layer.dots.length; di++) {
-        var dotPt = layer.dots[di];
-        var dx = dotPt.x + px.x;
-        var dy = dotPt.y + px.y;
-        var radius = layer.baseRadius;
-        var alpha = layer.baseAlpha;
-        var r = NAVY.r;
-        var g = NAVY.g;
-        var b = NAVY.b;
+  function strokeSeg(x1, y1, x2, y2, baseAlpha) {
+    var alpha = baseAlpha;
+    var boost = glowBoost(x1, y1, x2, y2);
 
-        if (hasPointer) {
-          var distX = dx - pointerX;
-          var distY = dy - pointerY;
-          var dist = Math.sqrt(distX * distX + distY * distY);
-          if (dist < MAGNET_RADIUS) {
-            var influence = 1 - dist / MAGNET_RADIUS;
-            influence = influence * influence;
-            radius = layer.baseRadius + influence * (3.2 + li * 0.8);
-            alpha = layer.baseAlpha + influence * (0.88 - layer.baseAlpha);
-            r = NAVY.r + (brandR - NAVY.r) * influence;
-            g = NAVY.g + (brandG - NAVY.g) * influence;
-            b = NAVY.b + (brandB - NAVY.b) * influence;
-          }
-        }
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.strokeStyle = 'rgba(22,35,63,' + alpha + ')';
+    ctx.lineWidth = 1;
+    ctx.stroke();
 
-        ctx.beginPath();
-        ctx.arc(dx, dy, radius, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(' + Math.round(r) + ',' + Math.round(g) + ',' + Math.round(b) + ',' + alpha + ')';
-        ctx.fill();
-      }
+    if (boost > 0.02) {
+      var ct = colorTFromX(pointerX * (window.innerWidth || cw));
+      var r = Math.round(CYAN.r + (ORANGE.r - CYAN.r) * ct);
+      var g = Math.round(CYAN.g + (ORANGE.g - CYAN.g) * ct);
+      var b = Math.round(CYAN.b + (ORANGE.b - CYAN.b) * ct);
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.strokeStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + (0.08 + boost * 0.42) + ')';
+      ctx.lineWidth = 1.25 + boost * 1.1;
+      ctx.stroke();
+    }
+  }
+
+  function tickGrid(now) {
+    if (!tickGrid._t0) tickGrid._t0 = now;
+    var dt = Math.min(32, now - (tickGrid._last || now));
+    tickGrid._last = now;
+
+    vpOffset.x += (vpTarget.x - vpOffset.x) * vpLerp;
+    vpOffset.y += (vpTarget.y - vpOffset.y) * vpLerp;
+
+    scrollPhase = (scrollPhase + FLOW_SPEED * dt) % 1;
+
+    /* Anchor VP to the first viewport so the floor reads on load,
+       not buried by the tall form-driven hero height. */
+    var baseVpY = Math.min(ch * 0.28, Math.max(160, window.innerHeight * 0.34));
+    var vpX = cw * 0.5 + vpOffset.x;
+    var vpY = baseVpY + vpOffset.y;
+    vpY = Math.max(ch * 0.08, Math.min(baseVpY + MAX_VP_SHIFT, vpY));
+
+    ctx.clearRect(0, 0, cw, ch);
+
+    /* Vertical rays converging to vanishing point */
+    var half = V_LINES / 2;
+    for (var vi = -half; vi <= half; vi++) {
+      if (half === 0) continue;
+      var spread = Math.max(cw * 1.35, (ch - vpY) * 1.1);
+      var xBottom = vpX + (vi / half) * spread;
+      var baseA = lineAlphaAtY((vpY + Math.min(ch, vpY + window.innerHeight)) * 0.5, vpY);
+      var edgeFade = 1 - Math.abs(vi) / half * 0.22;
+      strokeSeg(vpX, vpY, xBottom, ch + 2, baseA * edgeFade);
     }
 
-    requestAnimationFrame(tickDots);
+    /* Horizontal perspective lines with continuous flow */
+    for (var hi = 0; hi < H_LINES; hi++) {
+      var t = (hi + scrollPhase) / H_LINES;
+      if (t > 1) t -= 1;
+      var depth = t * t;
+      var y = vpY + (ch - vpY) * depth;
+      if (y < vpY + 0.5 || y > ch + 1) continue;
+
+      var leftX = vpX + ((0 - vpX) / Math.max(1, ch - vpY)) * (y - vpY);
+      var rightX = vpX + ((cw - vpX) / Math.max(1, ch - vpY)) * (y - vpY);
+      var extend = (rightX - leftX) * 0.1;
+      leftX -= extend;
+      rightX += extend;
+
+      var a = lineAlphaAtY(y, vpY);
+      strokeSeg(leftX, y, rightX, y, a);
+    }
+
+    /* Edge fade — softer top so floor stays readable in the first screen */
+    ctx.save();
+    ctx.globalCompositeOperation = 'destination-in';
+    var fade = ctx.createLinearGradient(0, 0, 0, ch);
+    var vpRatio = Math.min(0.4, vpY / Math.max(1, ch));
+    fade.addColorStop(0, 'rgba(0,0,0,0)');
+    fade.addColorStop(Math.max(0.04, vpRatio * 0.55), 'rgba(0,0,0,0.5)');
+    fade.addColorStop(Math.min(0.5, vpRatio + 0.12), 'rgba(0,0,0,0.92)');
+    fade.addColorStop(0.88, 'rgba(0,0,0,1)');
+    fade.addColorStop(1, 'rgba(0,0,0,0.65)');
+    ctx.fillStyle = fade;
+    ctx.fillRect(0, 0, cw, ch);
+
+    var side = ctx.createLinearGradient(0, 0, cw, 0);
+    side.addColorStop(0, 'rgba(0,0,0,0.2)');
+    side.addColorStop(0.05, 'rgba(0,0,0,1)');
+    side.addColorStop(0.95, 'rgba(0,0,0,1)');
+    side.addColorStop(1, 'rgba(0,0,0,0.2)');
+    ctx.fillStyle = side;
+    ctx.fillRect(0, 0, cw, ch);
+    ctx.restore();
+
+    requestAnimationFrame(tickGrid);
   }
-  requestAnimationFrame(tickDots);
+  requestAnimationFrame(tickGrid);
 })();
 </script>
 
