@@ -117,7 +117,38 @@
       var(--white);
     padding: clamp(48px, 8vw, 88px) 0 clamp(30px, 5vw, 50px);
   }
+  .hero-cursor-glow {
+    display: none;
+    position: absolute;
+    width: 560px;
+    height: 560px;
+    border-radius: 50%;
+    left: 0;
+    top: 0;
+    margin: 0;
+    pointer-events: none;
+    z-index: 0;
+    background: radial-gradient(
+      circle,
+      rgba(79, 163, 209, 0.14) 0%,
+      rgba(225, 90, 44, 0.09) 32%,
+      transparent 68%
+    );
+    filter: blur(60px);
+    opacity: 0;
+    will-change: transform;
+    transition: opacity 0.45s ease;
+  }
+  .hero.is-glow-active .hero-cursor-glow { opacity: 1; }
+  @media (pointer: fine) {
+    .hero-cursor-glow { display: block; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-cursor-glow { display: none !important; }
+  }
   .hero-top {
+    position: relative;
+    z-index: 1;
     max-width: var(--max); margin: 0 auto; padding: 0 clamp(20px, 5vw, 56px);
     display: grid; grid-template-columns: 0.85fr 1.15fr; gap: clamp(36px, 6vw, 72px); align-items: start;
   }
@@ -138,11 +169,45 @@
 
   /* ================= FORM CARD ================= */
   .form-card {
+    position: relative;
     background: var(--white); border-radius: 6px; box-shadow: var(--shadow-card);
     border: 1px solid var(--hairline); overflow: hidden;
+    transform-style: preserve-3d;
     transition: box-shadow 0.35s var(--ease-out);
   }
   .form-card:hover { box-shadow: 0 1px 2px rgba(22,35,63,0.05), 0 26px 60px -12px rgba(22,35,63,0.2); }
+  .form-card.is-tilting {
+    transition: transform 0.1s ease-out, box-shadow 0.35s var(--ease-out);
+  }
+  .form-card.is-tilt-reset {
+    transition: transform 0.4s ease, box-shadow 0.35s var(--ease-out);
+  }
+  .form-card__shine {
+    display: none;
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    z-index: 3;
+    background: radial-gradient(
+      circle 220px at var(--shine-x, 50%) var(--shine-y, 50%),
+      rgba(79, 163, 209, 0.16),
+      transparent 55%
+    );
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+  .form-card.is-tilting .form-card__shine { opacity: 1; }
+  @media (pointer: fine) {
+    .form-card__shine { display: block; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .form-card__shine { display: none !important; }
+    .form-card.is-tilting,
+    .form-card.is-tilt-reset { transition: box-shadow 0.35s var(--ease-out); }
+  }
+  .form-card-head,
+  .form-card .upload-form { position: relative; z-index: 1; }
   .form-card-head { padding: clamp(24px,4vw,36px) clamp(24px,4vw,36px) 4px; }
   .step-tag {
     display: inline-flex; align-items: center; gap: 10px;
@@ -316,6 +381,7 @@
 <section id="top">
   <h2 class="visually-hidden">Cómo funciona</h2>
   <div class="hero">
+    <div class="hero-cursor-glow" aria-hidden="true"></div>
     <div class="hero-top">
       <div class="hero-brand reveal">
         <img class="full-logo" src="logo3dmania-completo.png" alt="3D Mania Madrid">
@@ -324,6 +390,7 @@
       </div>
 
       <div class="form-card reveal reveal--delay-1">
+        <div class="form-card__shine" aria-hidden="true"></div>
         <div class="form-card-head">
           <div class="step-tag"><span class="num-badge">01</span>Paso 1</div>
           <h2>Sube tu archivo</h2>
@@ -607,6 +674,104 @@
       submitBtn.disabled = false;
       submitBtn.textContent = 'Enviar archivo';
     });
+  });
+})();
+
+(function () {
+  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var finePointer = window.matchMedia('(pointer: fine)').matches;
+  if (prefersReduced || !finePointer) return;
+
+  /* —— Hero cursor glow —— */
+  var hero = document.querySelector('.hero');
+  var glow = document.querySelector('.hero-cursor-glow');
+  if (hero && glow) {
+    var glowSize = 560;
+    var half = glowSize / 2;
+    var targetX = half;
+    var targetY = half;
+    var currentX = half;
+    var currentY = half;
+    var glowRaf = 0;
+    var glowActive = false;
+    var lerp = 0.085;
+
+    function tickGlow() {
+      currentX += (targetX - currentX) * lerp;
+      currentY += (targetY - currentY) * lerp;
+      glow.style.transform = 'translate(' + (currentX - half) + 'px, ' + (currentY - half) + 'px)';
+      glowRaf = requestAnimationFrame(tickGlow);
+    }
+
+    hero.addEventListener('mousemove', function (e) {
+      var rect = hero.getBoundingClientRect();
+      targetX = e.clientX - rect.left;
+      targetY = e.clientY - rect.top;
+      if (!glowActive) {
+        glowActive = true;
+        hero.classList.add('is-glow-active');
+        currentX = targetX;
+        currentY = targetY;
+        if (!glowRaf) glowRaf = requestAnimationFrame(tickGlow);
+      }
+    }, { passive: true });
+
+    hero.addEventListener('mouseleave', function () {
+      hero.classList.remove('is-glow-active');
+      glowActive = false;
+    });
+  }
+
+  /* —— Form card 3D tilt + shine —— */
+  var card = document.querySelector('.form-card');
+  if (!card) return;
+
+  var maxTilt = 5;
+  var tiltTargetX = 0;
+  var tiltTargetY = 0;
+  var shineX = 50;
+  var shineY = 50;
+  var tiltRaf = 0;
+  var tilting = false;
+
+  function tickTilt() {
+    card.style.transform =
+      'perspective(1000px) rotateX(' + tiltTargetX.toFixed(2) + 'deg) rotateY(' + tiltTargetY.toFixed(2) + 'deg)';
+    card.style.setProperty('--shine-x', shineX.toFixed(1) + '%');
+    card.style.setProperty('--shine-y', shineY.toFixed(1) + '%');
+    tiltRaf = 0;
+  }
+
+  function scheduleTilt() {
+    if (!tiltRaf) tiltRaf = requestAnimationFrame(tickTilt);
+  }
+
+  card.addEventListener('mousemove', function (e) {
+    var rect = card.getBoundingClientRect();
+    var x = (e.clientX - rect.left) / rect.width;
+    var y = (e.clientY - rect.top) / rect.height;
+    tiltTargetY = (x - 0.5) * (maxTilt * 2);
+    tiltTargetX = (0.5 - y) * (maxTilt * 2);
+    shineX = x * 100;
+    shineY = y * 100;
+
+    if (!tilting) {
+      tilting = true;
+      card.classList.remove('is-tilt-reset');
+      card.classList.add('is-tilting');
+    }
+    scheduleTilt();
+  }, { passive: true });
+
+  card.addEventListener('mouseleave', function () {
+    tilting = false;
+    card.classList.remove('is-tilting');
+    card.classList.add('is-tilt-reset');
+    tiltTargetX = 0;
+    tiltTargetY = 0;
+    shineX = 50;
+    shineY = 50;
+    scheduleTilt();
   });
 })();
 </script>
