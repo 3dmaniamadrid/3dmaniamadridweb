@@ -153,43 +153,25 @@
     .hero-brand img.full-logo { width: 190px; }
   }
 
-  /* ================= CUSTOM CURSOR ================= */
-  .cursor-dot,
-  .cursor-ring {
+  /* ================= CURSOR TRAIL ================= */
+  .cursor-trail {
     display: none;
     position: fixed;
-    top: 0;
-    left: 0;
-    border-radius: 50%;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     pointer-events: none;
-    z-index: 9999;
-    mix-blend-mode: difference;
-    will-change: transform;
-  }
-  .cursor-dot {
-    width: 8px;
-    height: 8px;
-    margin: -4px 0 0 -4px;
-    background: #4FA3D1;
-  }
-  .cursor-ring {
-    width: 32px;
-    height: 32px;
-    margin: -16px 0 0 -16px;
-    border: 1.5px solid #4FA3D1;
-    background: transparent;
+    z-index: 10000;
   }
   @media (pointer: fine) {
-    body.has-custom-cursor,
-    body.has-custom-cursor * { cursor: none !important; }
-    .cursor-dot,
-    .cursor-ring { display: block; }
+    .cursor-trail { display: block; }
+    body.has-cursor-trail,
+    body.has-cursor-trail * { cursor: none !important; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .cursor-dot,
-    .cursor-ring { display: none !important; }
-    body.has-custom-cursor,
-    body.has-custom-cursor * { cursor: auto !important; }
+    .cursor-trail { display: none !important; }
+    body.has-cursor-trail,
+    body.has-cursor-trail * { cursor: auto !important; }
   }
 
   /* ================= FORM CARD ================= */
@@ -523,8 +505,7 @@
   </div>
 </footer>
 
-<div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
-<div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+<canvas class="cursor-trail" id="cursorTrail" aria-hidden="true"></canvas>
 
 <script>
 (function () {
@@ -677,87 +658,145 @@
 
   var CYAN = { r: 79, g: 163, b: 209 };
   var ORANGE = { r: 225, g: 90, b: 44 };
-
-  function lerpColor(t) {
-    var r = Math.round(CYAN.r + (ORANGE.r - CYAN.r) * t);
-    var g = Math.round(CYAN.g + (ORANGE.g - CYAN.g) * t);
-    var b = Math.round(CYAN.b + (ORANGE.b - CYAN.b) * t);
-    return 'rgb(' + r + ',' + g + ',' + b + ')';
-  }
+  var NAVY = { r: 22, g: 35, b: 63 };
 
   function colorTFromX(clientX) {
     var w = window.innerWidth || 1;
     return Math.min(1, Math.max(0, clientX / w));
   }
 
-  /* —— Custom precision cursor —— */
-  var dot = document.getElementById('cursorDot');
-  var ring = document.getElementById('cursorRing');
-  if (dot && ring) {
-    document.body.classList.add('has-custom-cursor');
+  /* —— Full-page cursor trail —— */
+  var trailCanvas = document.getElementById('cursorTrail');
+  if (trailCanvas) {
+    document.body.classList.add('has-cursor-trail');
 
-    var mouseX = window.innerWidth / 2;
-    var mouseY = window.innerHeight / 2;
-    var ringX = mouseX;
-    var ringY = mouseY;
-    var ringLerp = 0.18;
-    var hovering = false;
-    var interactiveSelector = 'a, button, input, textarea, label, .dropzone, .btn, .submit-btn, [role="button"]';
+    var tctx = trailCanvas.getContext('2d');
+    var trailDpr = Math.min(window.devicePixelRatio || 1, 2);
+    var points = [];
+    var MAX_POINTS = 18;
+    var mouseX = -1000;
+    var mouseY = -1000;
+    var hasMouse = false;
+    var lastMove = 0;
 
-    function isInteractive(el) {
-      if (!el || el === document.body || el === document.documentElement) return false;
-      return !!(el.closest && el.closest(interactiveSelector));
+    function resizeTrail() {
+      var w = window.innerWidth;
+      var h = window.innerHeight;
+      trailCanvas.width = Math.floor(w * trailDpr);
+      trailCanvas.height = Math.floor(h * trailDpr);
+      trailCanvas.style.width = w + 'px';
+      trailCanvas.style.height = h + 'px';
+      tctx.setTransform(trailDpr, 0, 0, trailDpr, 0, 0);
     }
+    resizeTrail();
+    window.addEventListener('resize', resizeTrail);
 
     window.addEventListener('mousemove', function (e) {
       mouseX = e.clientX;
       mouseY = e.clientY;
-      var nextHover = isInteractive(e.target);
-      if (nextHover !== hovering) {
-        hovering = nextHover;
-        dot.classList.toggle('is-hover', hovering);
-        ring.classList.toggle('is-hover', hovering);
-      }
+      hasMouse = true;
+      lastMove = performance.now();
+      points.push({ x: mouseX, y: mouseY });
+      while (points.length > MAX_POINTS) points.shift();
     }, { passive: true });
 
-    window.addEventListener('mouseleave', function () {
-      dot.style.opacity = '0';
-      ring.style.opacity = '0';
-    });
-    window.addEventListener('mouseenter', function () {
-      dot.style.opacity = '1';
-      ring.style.opacity = '1';
+    document.documentElement.addEventListener('mouseleave', function () {
+      hasMouse = false;
     });
 
-    function tickCursor() {
-      var t = colorTFromX(mouseX);
-      var color = lerpColor(t);
-      dot.style.backgroundColor = color;
-      ring.style.borderColor = color;
+    function tickTrail() {
+      var w = window.innerWidth;
+      var h = window.innerHeight;
+      tctx.clearRect(0, 0, w, h);
 
-      var hoverScaleDot = hovering ? 1.5 : 1;
-      var hoverScaleRing = hovering ? 0.55 : 1;
+      /* Idle decay so the trail shrinks when the mouse stops */
+      if (points.length && performance.now() - lastMove > 28) {
+        points.shift();
+        lastMove += 16;
+      }
 
-      /* Dot: exact follow, no lerp */
-      dot.style.transform =
-        'translate3d(' + mouseX + 'px,' + mouseY + 'px,0) scale(' + hoverScaleDot + ')';
+      if (points.length >= 2) {
+        var head = points[points.length - 1];
+        var tail = points[0];
 
-      ringX += (mouseX - ringX) * ringLerp;
-      ringY += (mouseY - ringY) * ringLerp;
-      ring.style.transform =
-        'translate3d(' + ringX + 'px,' + ringY + 'px,0) scale(' + hoverScaleRing + ')';
+        /* Soft comet wash */
+        var wash = tctx.createLinearGradient(head.x, head.y, tail.x, tail.y);
+        wash.addColorStop(0, 'rgba(79,163,209,0.45)');
+        wash.addColorStop(0.5, 'rgba(225,90,44,0.28)');
+        wash.addColorStop(1, 'rgba(225,90,44,0)');
+        tctx.beginPath();
+        tctx.moveTo(points[0].x, points[0].y);
+        for (var j = 1; j < points.length - 1; j++) {
+          var mx = (points[j].x + points[j + 1].x) / 2;
+          var my = (points[j].y + points[j + 1].y) / 2;
+          tctx.quadraticCurveTo(points[j].x, points[j].y, mx, my);
+        }
+        tctx.lineTo(head.x, head.y);
+        tctx.strokeStyle = wash;
+        tctx.lineWidth = 12;
+        tctx.lineCap = 'round';
+        tctx.lineJoin = 'round';
+        tctx.stroke();
 
-      requestAnimationFrame(tickCursor);
+        /* Segment trail: thick→thin, cyan→orange, opacity fade */
+        for (var i = 1; i < points.length; i++) {
+          var p0 = points[i - 1];
+          var p1 = points[i];
+          var t = i / (points.length - 1);
+          var width = 1.2 + t * 6.5;
+          var alpha = 0.15 + t * 0.75;
+          var r = Math.round(ORANGE.r + (CYAN.r - ORANGE.r) * t);
+          var g = Math.round(ORANGE.g + (CYAN.g - ORANGE.g) * t);
+          var b = Math.round(ORANGE.b + (CYAN.b - ORANGE.b) * t);
+
+          tctx.beginPath();
+          tctx.moveTo(p0.x, p0.y);
+          tctx.lineTo(p1.x, p1.y);
+          tctx.strokeStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+          tctx.lineWidth = width;
+          tctx.lineCap = 'round';
+          tctx.lineJoin = 'round';
+          tctx.stroke();
+        }
+
+        /* Glow tip */
+        tctx.save();
+        tctx.beginPath();
+        tctx.arc(head.x, head.y, 5.5, 0, Math.PI * 2);
+        tctx.fillStyle = 'rgba(79,163,209,1)';
+        tctx.shadowColor = 'rgba(225,90,44,0.9)';
+        tctx.shadowBlur = 24;
+        tctx.fill();
+        tctx.restore();
+      } else if (hasMouse) {
+        tctx.save();
+        tctx.beginPath();
+        tctx.arc(mouseX, mouseY, 5.5, 0, Math.PI * 2);
+        tctx.fillStyle = 'rgba(79,163,209,1)';
+        tctx.shadowColor = 'rgba(225,90,44,0.9)';
+        tctx.shadowBlur = 24;
+        tctx.fill();
+        tctx.restore();
+      }
+
+      /* Decay trail when mouse leaves the window */
+      if (!hasMouse && points.length) {
+        points.shift();
+      }
+
+      requestAnimationFrame(tickTrail);
     }
-    requestAnimationFrame(tickCursor);
+    requestAnimationFrame(tickTrail);
   }
 
-  /* —— Hero layered dots field —— */
+  /* —— Hero layered dots field (high visibility) —— */
   var hero = document.querySelector('.hero');
   var canvas = document.getElementById('heroDots');
   if (!hero || !canvas) return;
 
   var ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
   var dpr = Math.min(window.devicePixelRatio || 1, 2);
   var layers = [];
   var pointerX = 0;
@@ -773,15 +812,15 @@
     { x: 0, y: 0 },
     { x: 0, y: 0 }
   ];
-  var MAGNET_RADIUS = 140;
-  var parallaxStrength = [6, 14, 26];
+  var MAGNET_RADIUS = 150;
+  var parallaxStrength = [8, 16, 28];
   var parallaxLerp = 0.08;
 
   function buildLayers(w, h) {
     layers = [
-      { spacing: 28, baseRadius: 1.4, baseAlpha: 0.09, depth: [] },
-      { spacing: 34, baseRadius: 1.9, baseAlpha: 0.11, dots: [] },
-      { spacing: 42, baseRadius: 2.4, baseAlpha: 0.13, dots: [] }
+      { spacing: 30, baseRadius: 2, baseAlpha: 0.28, dots: [] },
+      { spacing: 36, baseRadius: 3, baseAlpha: 0.36, dots: [] },
+      { spacing: 44, baseRadius: 4.5, baseAlpha: 0.48, dots: [] }
     ];
     for (var li = 0; li < layers.length; li++) {
       var layer = layers[li];
@@ -815,8 +854,8 @@
     pointerY = e.clientY - rect.top;
     hasPointer = true;
 
-    var cx = rect.width / 2;
-    var cy = rect.height / 2;
+    var cx = Math.max(1, rect.width / 2);
+    var cy = Math.max(1, rect.height / 2);
     var nx = (pointerX - cx) / cx;
     var ny = (pointerY - cy) / cy;
     for (var i = 0; i < 3; i++) {
@@ -858,9 +897,9 @@
         var dy = dotPt.y + px.y;
         var radius = layer.baseRadius;
         var alpha = layer.baseAlpha;
-        var r = 100;
-        var g = 110;
-        var b = 120;
+        var r = NAVY.r;
+        var g = NAVY.g;
+        var b = NAVY.b;
 
         if (hasPointer) {
           var distX = dx - pointerX;
@@ -869,11 +908,11 @@
           if (dist < MAGNET_RADIUS) {
             var influence = 1 - dist / MAGNET_RADIUS;
             influence = influence * influence;
-            radius = layer.baseRadius + influence * (2.8 + li * 0.6);
-            alpha = layer.baseAlpha + influence * (0.55 - layer.baseAlpha);
-            r = 100 + (brandR - 100) * influence;
-            g = 110 + (brandG - 110) * influence;
-            b = 120 + (brandB - 120) * influence;
+            radius = layer.baseRadius + influence * (3.2 + li * 0.8);
+            alpha = layer.baseAlpha + influence * (0.88 - layer.baseAlpha);
+            r = NAVY.r + (brandR - NAVY.r) * influence;
+            g = NAVY.g + (brandG - NAVY.g) * influence;
+            b = NAVY.b + (brandB - NAVY.b) * influence;
           }
         }
 
