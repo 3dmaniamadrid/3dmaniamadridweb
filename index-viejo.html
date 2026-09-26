@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3D Mania Madrid — Impresión 3D en Madrid</title>
+<meta name="description" content="Servicio de impresión 3D en Madrid. Cuéntanos por WhatsApp qué quieres imprimir y recibe presupuesto en horas.">
+<link rel="icon" type="image/png" href="logo3dmania-icono.png">
+<link rel="apple-touch-icon" href="logo3dmania-icono.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --white: #FFFFFF;
+    --soft: #F6F7F9;
+    --navy: #16233F;
+    --navy-deep: #0F192E;
+    --cyan: #4FA3D1;
+    --cyan-soft: rgba(79,163,209,0.14);
+    --orange: #E15A2C;
+    --orange-dark: #C0491F;
+    --wa: #25D366;
+    --wa-dark: #1EBE57;
+    --ink: #16233F;
+    --graphite: #64707D;
+    --hairline: rgba(22,35,63,0.10);
+    --hairline-dark: rgba(255,255,255,0.12);
+
+    --display: 'Space Grotesk', sans-serif;
+    --body-font: 'Inter', sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+
+    --max: 1180px;
+    --nav-h: 4rem;
+    --shadow-card: 0 1px 2px rgba(22,35,63,0.04), 0 16px 40px -12px rgba(22,35,63,0.12);
+    --shadow-hero: 0 4px 8px rgba(15,25,46,0.12), 0 28px 64px -16px rgba(15,25,46,0.45);
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  html { scroll-behavior: smooth; scroll-padding-top: var(--nav-h); }
+
+  body {
+    background: var(--white);
+    color: var(--ink);
+    font-family: var(--body-font);
+    font-size: 1.025rem;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  img, svg { display: block; max-width: 100%; }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
+
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 clamp(20px, 5vw, 56px); }
+
+  .visually-hidden {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+
+  .eyebrow {
+    font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--orange-dark);
+    display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
+  }
+  .eyebrow::before { content: ""; width: 20px; height: 1px; background: var(--orange-dark); }
+  .eyebrow.on-dark { color: var(--cyan); }
+  .eyebrow.on-dark::before { background: var(--cyan); }
+
+  .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out); }
+  .reveal.is-visible { opacity: 1; transform: translateY(0); }
+  .reveal--delay-1 { transition-delay: 0.1s; }
+  .reveal--delay-2 { transition-delay: 0.18s; }
+  @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+  /* ================= NAV ================= */
+  header.nav {
+    position: sticky; top: 0; z-index: 50; height: var(--nav-h);
+    background: rgba(255,255,255,0.82); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--hairline);
+    transition: box-shadow 0.3s ease, background 0.3s ease;
+  }
+  header.nav.scrolled { background: rgba(255,255,255,0.96); box-shadow: 0 1px 0 rgba(22,35,63,0.06), 0 8px 24px rgba(22,35,63,0.05); }
+  .nav-inner {
+    display: flex; align-items: center; justify-content: space-between; height: 100%;
+    max-width: var(--max); margin: 0 auto; padding: 0 clamp(20px, 5vw, 56px); gap: 1rem;
+  }
+  .nav-logo { display: inline-flex; align-items: center; line-height: 0; }
+  .nav-logo img { height: 34px; width: auto; }
+  .nav-links { display: flex; gap: 34px; list-style: none; font-size: 0.92rem; font-weight: 500; }
+  .nav-links a { text-decoration: none; color: var(--ink); position: relative; padding-bottom: 4px; }
+  .nav-links a::after {
+    content: ""; position: absolute; left: 0; bottom: 0; width: 0%; height: 1.5px;
+    background: var(--orange); transition: width 0.25s ease;
+  }
+  .nav-links a:hover::after { width: 100%; }
+
+  .btn {
+    font-family: var(--mono); font-size: 0.76rem; letter-spacing: 0.06em; text-transform: uppercase;
+    text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+    padding: 11px 20px; border: 1px solid var(--navy); color: var(--navy);
+    border-radius: 4px; cursor: pointer; background: none;
+    transition: transform 0.15s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-primary { background: var(--orange); border-color: var(--orange); color: var(--white); box-shadow: 0 6px 16px rgba(225,90,44,0.25); }
+  .btn-primary:hover { background: var(--orange-dark); border-color: var(--orange-dark); }
+  .nav .btn { padding: 9px 16px; font-size: 0.7rem; }
+  @media (max-width: 780px) { .nav-links { display: none; } }
+
+  /* ================= HERO ================= */
+  .hero {
+    position: relative;
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(79,163,209,0.10), transparent 60%),
+      radial-gradient(ellipse 700px 400px at 100% 10%, rgba(225,90,44,0.07), transparent 60%),
+      var(--white);
+    padding: clamp(52px, 9vw, 88px) 0 clamp(48px, 8vw, 72px);
+  }
+  .hero-top {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 660px;
+    margin: 0 auto;
+    padding: 0 clamp(20px, 5vw, 56px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .hero-brand {
+    width: 100%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: clamp(40px, 5vw, 48px);
+  }
+  .hero-brand img.full-logo {
+    width: min(248px, 70%);
+    margin: 0 auto 18px;
+  }
+  .hero-brand .eyebrow {
+    margin-bottom: 12px;
+    justify-content: center;
+  }
+  .hero-brand h1 {
+    font-family: var(--display); font-weight: 700;
+    font-size: clamp(2.35rem, 4.2vw, 3.35rem);
+    line-height: 1.05; letter-spacing: -0.035em;
+  }
+  .hero-brand h1 .accent { color: var(--cyan); }
+  @media (max-width: 900px) {
+    .hero-brand img.full-logo { width: 180px; }
+  }
+
+  /* ================= CURSOR TRAIL ================= */
+  .cursor-trail {
+    display: none;
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10000;
+  }
+  @media (pointer: fine) {
+    .cursor-trail { display: block; }
+    body.has-cursor-trail,
+    body.has-cursor-trail * { cursor: none !important; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cursor-trail { display: none !important; }
+    body.has-cursor-trail,
+    body.has-cursor-trail * { cursor: auto !important; }
+  }
+
+  /* ================= STEP LABEL ================= */
+  .step-label {
+    display: flex; align-items: center; gap: 10px;
+    font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.11em; text-transform: uppercase;
+    color: var(--graphite); margin-bottom: 12px;
+  }
+  .step-label::before {
+    content: ""; width: 18px; height: 1px; background: var(--orange-dark); flex-shrink: 0;
+  }
+  .step-label__num { color: var(--orange-dark); }
+  .wa-card .step-label { color: rgba(255,255,255,0.55); }
+  .wa-card .step-label::before { background: var(--cyan); }
+  .wa-card .step-label__num { color: var(--cyan); }
+
+  /* ================= WHATSAPP CARD (paso 01) ================= */
+  .wa-card {
+    position: relative;
+    width: 100%;
+    max-width: 640px;
+    background: linear-gradient(155deg, var(--navy) 0%, var(--navy-deep) 100%);
+    color: var(--white);
+    border-radius: 14px;
+    padding: clamp(28px, 4.5vw, 40px);
+    box-shadow: var(--shadow-hero);
+    border: 1px solid rgba(127,184,217,0.18);
+    overflow: hidden;
+  }
+  .wa-card::before {
+    content: "";
+    position: absolute; inset: auto -20% -40% auto;
+    width: 280px; height: 280px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(79,163,209,0.18), transparent 70%);
+    pointer-events: none;
+  }
+  .wa-card::after {
+    content: "";
+    position: absolute; inset: -30% auto auto -15%;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(225,90,44,0.12), transparent 70%);
+    pointer-events: none;
+  }
+  .wa-card > * { position: relative; z-index: 1; }
+  .wa-card h2 {
+    font-family: var(--display); font-weight: 700;
+    font-size: clamp(1.55rem, 2.8vw, 1.9rem);
+    letter-spacing: -0.03em; line-height: 1.15;
+    margin-bottom: 14px;
+  }
+  .wa-card__text {
+    color: rgba(255,255,255,0.78);
+    font-size: clamp(0.98rem, 1.7vw, 1.08rem);
+    line-height: 1.65;
+    max-width: 38ch;
+    margin-bottom: 20px;
+  }
+  .wa-card__trust {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 14px;
+  }
+
+  .wa-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 12px;
+    width: 100%;
+    padding: 16px 22px;
+    background: var(--wa); color: var(--white);
+    font-family: var(--display); font-weight: 700; font-size: 1.05rem;
+    text-decoration: none; border-radius: 10px; border: none;
+    box-shadow: 0 10px 28px rgba(37,211,102,0.32);
+    transition: transform 0.2s var(--ease-out), background 0.2s ease, box-shadow 0.2s ease;
+  }
+  .wa-btn svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+  .wa-btn:hover {
+    background: var(--wa-dark);
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 14px 36px rgba(37,211,102,0.4);
+  }
+  .wa-btn:active { transform: translateY(0) scale(0.99); }
+
+  .wa-phone {
+    margin-top: 26px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(255,255,255,0.12);
+  }
+  .wa-phone__note {
+    font-size: 0.88rem;
+    color: rgba(255,255,255,0.58);
+    line-height: 1.55;
+    margin-bottom: 12px;
+  }
+  .wa-phone__row {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px;
+  }
+  .wa-phone__number {
+    font-family: var(--display); font-weight: 700;
+    font-size: clamp(1.35rem, 2.6vw, 1.6rem);
+    letter-spacing: -0.02em;
+    color: var(--white);
+    user-select: text;
+    -webkit-user-select: text;
+  }
+  .wa-copy {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--cyan); background: rgba(79,163,209,0.12);
+    border: 1px solid rgba(79,163,209,0.28);
+    border-radius: 6px; padding: 8px 12px; cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+  }
+  .wa-copy svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .wa-copy:hover { background: rgba(79,163,209,0.22); transform: translateY(-1px); }
+  .wa-copy.is-copied {
+    color: var(--wa);
+    border-color: rgba(37,211,102,0.4);
+    background: rgba(37,211,102,0.14);
+  }
+
+  /* ================= PROCESS (steps 2-5) ================= */
+  .process {
+    background: var(--white);
+    padding: clamp(36px, 6vw, 56px) 0 clamp(80px, 11vw, 120px);
+  }
+  .steps { position: relative; max-width: 640px; margin: 0 auto; }
+  .steps::before {
+    content: ""; position: absolute; left: 23px; top: 8px; bottom: 8px; width: 1px;
+    background: repeating-linear-gradient(to bottom, rgba(22,35,63,0.14) 0 6px, transparent 6px 12px);
+  }
+  .step { position: relative; display: flex; gap: 24px; padding-bottom: 42px; }
+  .step:last-child { padding-bottom: 0; }
+  .step-icon {
+    flex: 0 0 48px; height: 48px; border-radius: 10px; background: var(--navy);
+    display: flex; align-items: center; justify-content: center; z-index: 1;
+    box-shadow: 0 4px 14px rgba(22,35,63,0.12);
+    transition: transform 0.25s var(--ease-out), background 0.25s ease, box-shadow 0.25s ease;
+  }
+  .step:hover .step-icon {
+    transform: translateY(-3px);
+    background: var(--navy-deep);
+    box-shadow: 0 10px 22px rgba(22,35,63,0.22);
+  }
+  .step-icon svg { width: 20px; height: 20px; stroke: var(--cyan); transition: stroke 0.25s ease; }
+  .step:hover .step-icon svg { stroke: #A8D4EB; }
+  .step-icon .icon-accent { stroke: var(--orange); }
+  .step-body {
+    flex: 1; min-width: 0;
+    padding-top: 2px;
+  }
+  .step-body h3 {
+    font-family: var(--display); font-size: clamp(1.15rem, 2.2vw, 1.28rem);
+    font-weight: 600; letter-spacing: -0.02em; margin-bottom: 8px;
+  }
+  .step-body p { color: var(--graphite); font-size: 0.98rem; line-height: 1.65; max-width: 48ch; }
+
+  /* ================= ADVANTAGES ================= */
+  .advantages { background: var(--navy-deep); color: var(--white); padding: clamp(80px, 12vw, 128px) 0; }
+  .adv-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--hairline-dark); }
+  @media (max-width: 800px) { .adv-grid { grid-template-columns: 1fr; } }
+  .adv-item {
+    padding: clamp(44px, 6vw, 60px) clamp(24px, 4vw, 48px);
+    border-right: 1px solid var(--hairline-dark);
+    transition: background 0.3s ease;
+  }
+  .adv-item:hover { background: rgba(255,255,255,0.035); }
+  .adv-item:last-child { border-right: none; }
+  @media (max-width: 800px) {
+    .adv-item { border-right: none; border-bottom: 1px solid var(--hairline-dark); }
+    .adv-item:last-child { border-bottom: none; }
+  }
+  .adv-item svg { width: 36px; height: 36px; stroke: var(--cyan); margin-bottom: 22px; }
+  .adv-item .label {
+    font-family: var(--mono); font-size: clamp(0.78rem, 1.5vw, 0.86rem);
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--cyan); margin-bottom: 14px;
+  }
+  .adv-item p { color: rgba(255,255,255,0.78); font-size: clamp(1rem, 1.8vw, 1.1rem); line-height: 1.65; }
+
+  /* ================= FOOTER ================= */
+  footer { background: var(--navy-deep); color: var(--white); border-top: 1px solid var(--hairline-dark); padding: 52px 0 28px; }
+  .footer-grid {
+    display: grid; grid-template-columns: auto 1fr 1fr 1fr; gap: clamp(24px,4vw,40px);
+    align-items: start; padding-bottom: 32px; border-bottom: 1px solid var(--hairline-dark);
+  }
+  @media (max-width: 800px) { .footer-grid { grid-template-columns: 1fr; gap: 26px; } }
+  .footer-logo img { height: 42px; }
+  .footer-col .label {
+    font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--cyan); margin-bottom: 8px;
+  }
+  .footer-col a, .footer-col span { font-size: 0.96rem; color: rgba(255,255,255,0.9); text-decoration: none; }
+  .footer-col a:hover { color: var(--cyan); }
+  .footer-bottom {
+    padding-top: 22px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+    font-family: var(--mono); font-size: 0.72rem; color: rgba(255,255,255,0.45); letter-spacing: 0.04em;
+  }
+</style>
+</head>
+<body>
+
+<header class="nav" id="siteNav">
+  <div class="nav-inner">
+    <a class="nav-logo" href="#top" aria-label="3D Mania Madrid — inicio">
+      <img src="logo3dmania-icono.png" alt="3D Mania Madrid">
+    </a>
+    <nav aria-label="Principal">
+      <ul class="nav-links">
+        <li><a href="#proceso">Proceso</a></li>
+        <li><a href="#ventajas">Servicio</a></li>
+        <li><a href="#contacto">Contacto</a></li>
+      </ul>
+    </nav>
+    <a class="btn btn-primary" href="#whatsapp">Pedir presupuesto</a>
+  </div>
+</header>
+
+<section id="top">
+  <h2 class="visually-hidden">Cómo funciona</h2>
+  <div class="hero">
+    <div class="hero-top">
+      <div class="hero-brand reveal">
+        <img class="full-logo" src="logo3dmania-completo.png" alt="3D Mania Madrid">
+        <div class="eyebrow">MADRID · IMPRESIÓN 3D</div>
+        <h1>Tu diseño,<br><span class="accent">impreso en 3D</span></h1>
+      </div>
+
+      <div class="wa-card reveal reveal--delay-1" id="whatsapp">
+        <div class="step-label">Paso <span class="step-label__num">01</span></div>
+        <h2>Cuéntanos qué necesitas</h2>
+        <p class="wa-card__text">Envíanos por WhatsApp tu archivo, una foto o una descripción. Te respondemos con un presupuesto en horas.</p>
+
+        <p class="wa-card__trust">Respuesta rápida, sin compromiso</p>
+
+        <a class="wa-btn" href="https://wa.me/34633586174" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          Escríbenos por WhatsApp
+        </a>
+
+        <div class="wa-phone">
+          <p class="wa-phone__note">¿Prefieres escribir más tarde? Guarda nuestro número:</p>
+          <div class="wa-phone__row">
+            <span class="wa-phone__number" id="phoneNumber">633 58 61 74</span>
+            <button type="button" class="wa-copy" id="copyPhone" aria-label="Copiar número de teléfono">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <span id="copyPhoneLabel">Copiar número</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="process" id="proceso">
+    <div class="wrap">
+      <div class="steps">
+        <div class="step reveal">
+          <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></div>
+          <div class="step-body">
+            <div class="step-label">Paso <span class="step-label__num">02</span></div>
+            <h3>Recibe tu presupuesto</h3>
+            <p>Te lo enviamos por WhatsApp, normalmente en pocas horas.</p>
+          </div>
+        </div>
+        <div class="step reveal">
+          <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+          <div class="step-body">
+            <div class="step-label">Paso <span class="step-label__num">03</span></div>
+            <h3>Aceptas</h3>
+            <p>Confirmas el presupuesto respondiendo a nuestro WhatsApp.</p>
+          </div>
+        </div>
+        <div class="step reveal">
+          <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18v-3a6 6 0 0 1 12 0v3"/><rect x="4" y="18" width="4" height="4" rx="1"/><rect x="16" y="18" width="4" height="4" rx="1"/></svg></div>
+          <div class="step-body">
+            <div class="step-label">Paso <span class="step-label__num">04</span></div>
+            <h3>Producción</h3>
+            <p>Ponemos la impresora en marcha para tu pieza.</p>
+          </div>
+        </div>
+        <div class="step reveal">
+          <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-7.58 7-12A7 7 0 0 0 5 10c0 4.42 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+          <div class="step-body">
+            <div class="step-label">Paso <span class="step-label__num">05</span></div>
+            <h3>Recogida</h3>
+            <p>Te avisamos en cuanto esté todo listo. Recogida en Calle Evangelina Sobredo Galanes, 40, 28023, Madrid.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="advantages" id="ventajas">
+  <div class="wrap">
+    <div class="adv-grid reveal">
+      <div class="adv-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        <div class="label">Máxima calidad</div>
+        <p>Impresión con la Bambu Lab P2S, resolución de capa desde 0,05 mm.</p>
+      </div>
+      <div class="adv-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>
+        <div class="label">Asesoramiento personalizado</div>
+        <p>Te ayudamos a elegir material y ajustes antes de imprimir, no solo a ejecutar el archivo.</p>
+      </div>
+      <div class="adv-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+        <div class="label">Agilidad</div>
+        <p>Presupuesto en horas y producción rápida, sin colas de fabricación en serie.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="contacto">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-logo"><img src="logo3dmania-completo.png" alt="3D Mania Madrid"></div>
+      <div class="footer-col">
+        <div class="label">Email</div>
+        <a href="mailto:3dmaniamadrid@gmail.com">3dmaniamadrid@gmail.com</a>
+      </div>
+      <div class="footer-col">
+        <div class="label">Teléfono / WhatsApp</div>
+        <a href="tel:+34633586174">633 58 61 74</a> ·
+        <a href="https://wa.me/34633586174" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+      </div>
+      <div class="footer-col">
+        <div class="label">Dirección</div>
+        <span>Calle Evangelina Sobredo Galanes, 40, Madrid</span>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 3D Mania Madrid</span>
+      <span>MADRID, ESPAÑA</span>
+    </div>
+  </div>
+</footer>
+
+<canvas class="cursor-trail" id="cursorTrail" aria-hidden="true"></canvas>
+
+<script>
+(function () {
+  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var nav = document.getElementById('siteNav');
+  var onScroll = function () { nav.classList.toggle('scrolled', window.scrollY > 8); };
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  var reveals = document.querySelectorAll('.reveal');
+  if (!prefersReduced && 'IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    reveals.forEach(function (el) { observer.observe(el); });
+  } else {
+    reveals.forEach(function (el) { el.classList.add('is-visible'); });
+  }
+
+  var copyBtn = document.getElementById('copyPhone');
+  var copyLabel = document.getElementById('copyPhoneLabel');
+  if (copyBtn && copyLabel) {
+    var copyTimer = null;
+    copyBtn.addEventListener('click', function () {
+      var number = '633586174';
+      copyBtn.classList.add('is-copied');
+      copyLabel.textContent = '¡Copiado!';
+      if (copyTimer) clearTimeout(copyTimer);
+      copyTimer = setTimeout(function () {
+        copyBtn.classList.remove('is-copied');
+        copyLabel.textContent = 'Copiar número';
+      }, 1600);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(number).catch(function () {});
+      }
+    });
+  }
+})();
+
+(function () {
+  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var finePointer = window.matchMedia('(pointer: fine)').matches;
+  if (prefersReduced || !finePointer) return;
+
+  var CYAN = { r: 79, g: 163, b: 209 };
+  var ORANGE = { r: 225, g: 90, b: 44 };
+
+  /* —— Full-page cursor trail —— */
+  var trailCanvas = document.getElementById('cursorTrail');
+  if (trailCanvas) {
+    document.body.classList.add('has-cursor-trail');
+
+    var tctx = trailCanvas.getContext('2d');
+    var trailDpr = Math.min(window.devicePixelRatio || 1, 2);
+    var points = [];
+    var MAX_POINTS = 18;
+    var mouseX = -1000;
+    var mouseY = -1000;
+    var hasMouse = false;
+    var lastMove = 0;
+
+    function resizeTrail() {
+      var w = window.innerWidth;
+      var h = window.innerHeight;
+      trailCanvas.width = Math.floor(w * trailDpr);
+      trailCanvas.height = Math.floor(h * trailDpr);
+      trailCanvas.style.width = w + 'px';
+      trailCanvas.style.height = h + 'px';
+      tctx.setTransform(trailDpr, 0, 0, trailDpr, 0, 0);
+    }
+    resizeTrail();
+    window.addEventListener('resize', resizeTrail);
+
+    window.addEventListener('mousemove', function (e) {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      hasMouse = true;
+      lastMove = performance.now();
+      points.push({ x: mouseX, y: mouseY });
+      while (points.length > MAX_POINTS) points.shift();
+    }, { passive: true });
+
+    document.documentElement.addEventListener('mouseleave', function () {
+      hasMouse = false;
+    });
+
+    function tickTrail() {
+      var w = window.innerWidth;
+      var h = window.innerHeight;
+      tctx.clearRect(0, 0, w, h);
+
+      /* Idle decay so the trail shrinks when the mouse stops */
+      if (points.length && performance.now() - lastMove > 28) {
+        points.shift();
+        lastMove += 16;
+      }
+
+      if (points.length >= 2) {
+        var head = points[points.length - 1];
+        var tail = points[0];
+
+        /* Soft comet wash */
+        var wash = tctx.createLinearGradient(head.x, head.y, tail.x, tail.y);
+        wash.addColorStop(0, 'rgba(79,163,209,0.45)');
+        wash.addColorStop(0.5, 'rgba(225,90,44,0.28)');
+        wash.addColorStop(1, 'rgba(225,90,44,0)');
+        tctx.beginPath();
+        tctx.moveTo(points[0].x, points[0].y);
+        for (var j = 1; j < points.length - 1; j++) {
+          var mx = (points[j].x + points[j + 1].x) / 2;
+          var my = (points[j].y + points[j + 1].y) / 2;
+          tctx.quadraticCurveTo(points[j].x, points[j].y, mx, my);
+        }
+        tctx.lineTo(head.x, head.y);
+        tctx.strokeStyle = wash;
+        tctx.lineWidth = 12;
+        tctx.lineCap = 'round';
+        tctx.lineJoin = 'round';
+        tctx.stroke();
+
+        /* Segment trail: thick→thin, cyan→orange, opacity fade */
+        for (var i = 1; i < points.length; i++) {
+          var p0 = points[i - 1];
+          var p1 = points[i];
+          var t = i / (points.length - 1);
+          var width = 1.2 + t * 6.5;
+          var alpha = 0.15 + t * 0.75;
+          var r = Math.round(ORANGE.r + (CYAN.r - ORANGE.r) * t);
+          var g = Math.round(ORANGE.g + (CYAN.g - ORANGE.g) * t);
+          var b = Math.round(ORANGE.b + (CYAN.b - ORANGE.b) * t);
+
+          tctx.beginPath();
+          tctx.moveTo(p0.x, p0.y);
+          tctx.lineTo(p1.x, p1.y);
+          tctx.strokeStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+          tctx.lineWidth = width;
+          tctx.lineCap = 'round';
+          tctx.lineJoin = 'round';
+          tctx.stroke();
+        }
+
+        /* Glow tip */
+        tctx.save();
+        tctx.beginPath();
+        tctx.arc(head.x, head.y, 5.5, 0, Math.PI * 2);
+        tctx.fillStyle = 'rgba(79,163,209,1)';
+        tctx.shadowColor = 'rgba(225,90,44,0.9)';
+        tctx.shadowBlur = 24;
+        tctx.fill();
+        tctx.restore();
+      } else if (hasMouse) {
+        tctx.save();
+        tctx.beginPath();
+        tctx.arc(mouseX, mouseY, 5.5, 0, Math.PI * 2);
+        tctx.fillStyle = 'rgba(79,163,209,1)';
+        tctx.shadowColor = 'rgba(225,90,44,0.9)';
+        tctx.shadowBlur = 24;
+        tctx.fill();
+        tctx.restore();
+      }
+
+      /* Decay trail when mouse leaves the window */
+      if (!hasMouse && points.length) {
+        points.shift();
+      }
+
+      requestAnimationFrame(tickTrail);
+    }
+    requestAnimationFrame(tickTrail);
+  }
+
+})();
+</script>
+
+</body>
+</html>
