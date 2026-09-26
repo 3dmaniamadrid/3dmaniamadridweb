@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>3D Mania Madrid — Impresión 3D en Madrid</title>
-<meta name="description" content="Servicio de impresión 3D en Madrid. Sube tu archivo .STL y recibe presupuesto por WhatsApp en horas.">
+<meta name="description" content="Servicio de impresión 3D en Madrid. Cuéntanos por WhatsApp qué quieres imprimir y recibe presupuesto en horas.">
 <link rel="icon" type="image/png" href="logo3dmania-icono.png">
 <link rel="apple-touch-icon" href="logo3dmania-icono.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,6 +22,8 @@
     --cyan-soft: rgba(79,163,209,0.14);
     --orange: #E15A2C;
     --orange-dark: #C0491F;
+    --wa: #25D366;
+    --wa-dark: #1EBE57;
     --ink: #16233F;
     --graphite: #64707D;
     --hairline: rgba(22,35,63,0.10);
@@ -33,7 +35,8 @@
 
     --max: 1180px;
     --nav-h: 4rem;
-    --shadow-card: 0 1px 2px rgba(22,35,63,0.04), 0 20px 50px -12px rgba(22,35,63,0.16);
+    --shadow-card: 0 1px 2px rgba(22,35,63,0.04), 0 16px 40px -12px rgba(22,35,63,0.12);
+    --shadow-hero: 0 4px 8px rgba(15,25,46,0.12), 0 28px 64px -16px rgba(15,25,46,0.45);
     --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
@@ -43,7 +46,8 @@
     background: var(--white);
     color: var(--ink);
     font-family: var(--body-font);
-    line-height: 1.6;
+    font-size: 1.025rem;
+    line-height: 1.65;
     -webkit-font-smoothing: antialiased;
   }
 
@@ -59,7 +63,7 @@
   }
 
   .eyebrow {
-    font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.14em;
+    font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.14em;
     text-transform: uppercase; color: var(--orange-dark);
     display: flex; align-items: center; gap: 10px; margin-bottom: 16px;
   }
@@ -67,10 +71,10 @@
   .eyebrow.on-dark { color: var(--cyan); }
   .eyebrow.on-dark::before { background: var(--cyan); }
 
-  .reveal { opacity: 0; transform: translateY(14px); transition: opacity 0.6s var(--ease-out), transform 0.6s var(--ease-out); }
+  .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out); }
   .reveal.is-visible { opacity: 1; transform: translateY(0); }
-  .reveal--delay-1 { transition-delay: 0.08s; }
-  .reveal--delay-2 { transition-delay: 0.16s; }
+  .reveal--delay-1 { transition-delay: 0.1s; }
+  .reveal--delay-2 { transition-delay: 0.18s; }
   @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
 
   /* ================= NAV ================= */
@@ -99,7 +103,7 @@
     font-family: var(--mono); font-size: 0.76rem; letter-spacing: 0.06em; text-transform: uppercase;
     text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
     padding: 11px 20px; border: 1px solid var(--navy); color: var(--navy);
-    border-radius: 2px; cursor: pointer; background: none;
+    border-radius: 4px; cursor: pointer; background: none;
     transition: transform 0.15s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
   }
   .btn:hover { transform: translateY(-2px); }
@@ -115,27 +119,28 @@
       radial-gradient(ellipse 900px 500px at 15% -10%, rgba(79,163,209,0.10), transparent 60%),
       radial-gradient(ellipse 700px 400px at 100% 10%, rgba(225,90,44,0.07), transparent 60%),
       var(--white);
-    padding: clamp(48px, 8vw, 88px) 0 clamp(30px, 5vw, 50px);
+    padding: clamp(56px, 9vw, 96px) 0 clamp(36px, 6vw, 56px);
   }
   .hero-top {
     position: relative;
     z-index: 1;
     max-width: var(--max); margin: 0 auto; padding: 0 clamp(20px, 5vw, 56px);
-    display: grid; grid-template-columns: 0.85fr 1.15fr; gap: clamp(36px, 6vw, 72px); align-items: start;
+    display: grid; grid-template-columns: 0.9fr 1.1fr; gap: clamp(40px, 6vw, 72px); align-items: start;
   }
-  @media (max-width: 900px) { .hero-top { grid-template-columns: 1fr; } }
+  @media (max-width: 900px) { .hero-top { grid-template-columns: 1fr; gap: 2rem; } }
 
   .hero-brand { position: sticky; top: calc(var(--nav-h) + 40px); }
-  .hero-brand img.full-logo { width: min(260px, 70%); margin-bottom: 14px; }
-  .hero-brand .eyebrow { margin-bottom: 10px; }
+  .hero-brand img.full-logo { width: min(248px, 68%); margin-bottom: 18px; }
+  .hero-brand .eyebrow { margin-bottom: 12px; }
   .hero-brand h1 {
-    font-family: var(--display); font-weight: 700; font-size: clamp(2.1rem, 3.6vw, 2.9rem);
-    line-height: 1.12; letter-spacing: -0.01em;
+    font-family: var(--display); font-weight: 700;
+    font-size: clamp(2.35rem, 4.2vw, 3.35rem);
+    line-height: 1.05; letter-spacing: -0.035em;
   }
   .hero-brand h1 .accent { color: var(--cyan); }
   @media (max-width: 900px) {
     .hero-brand { position: static; text-align: left; }
-    .hero-brand img.full-logo { width: 190px; }
+    .hero-brand img.full-logo { width: 180px; }
   }
 
   /* ================= CURSOR TRAIL ================= */
@@ -159,160 +164,199 @@
     body.has-cursor-trail * { cursor: auto !important; }
   }
 
-  /* ================= FORM CARD ================= */
-  .form-card {
-    background: var(--white); border-radius: 6px; box-shadow: var(--shadow-card);
-    border: 1px solid var(--hairline); overflow: hidden;
-    transition: box-shadow 0.35s var(--ease-out);
-  }
-  .form-card:hover { box-shadow: 0 1px 2px rgba(22,35,63,0.05), 0 26px 60px -12px rgba(22,35,63,0.2); }
-  .form-card-head { padding: clamp(24px,4vw,36px) clamp(24px,4vw,36px) 4px; }
+  /* ================= STEP LABEL ================= */
   .step-label {
     display: flex; align-items: center; gap: 10px;
     font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.11em; text-transform: uppercase;
-    color: var(--graphite); margin-bottom: 11px;
+    color: var(--graphite); margin-bottom: 12px;
   }
   .step-label::before {
     content: ""; width: 18px; height: 1px; background: var(--orange-dark); flex-shrink: 0;
   }
   .step-label__num { color: var(--orange-dark); }
-  .form-card-head h2 { font-family: var(--display); font-weight: 700; font-size: 1.4rem; margin-bottom: 10px; }
-  .form-card-head p { color: var(--graphite); font-size: 0.98rem; max-width: 46ch; }
-  .form-help {
-    display: flex; align-items: center; gap: 10px;
-    margin: 18px 0 22px; padding: 12px 14px;
-    background: var(--soft); border-radius: 4px;
-    font-size: 0.82rem; color: var(--graphite); line-height: 1.55;
-  }
-  .form-help svg {
-    flex-shrink: 0; width: 16px; height: 16px;
-    stroke: var(--graphite); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
-  }
-  .form-help a {
-    color: var(--navy); font-weight: 400; text-decoration: none;
-  }
-  .form-help a:hover {
-    text-decoration: underline; text-underline-offset: 2px;
-    text-decoration-color: rgba(22, 35, 63, 0.35);
-  }
-  .form-help__lead { font-weight: 600; }
-  .form-help__phone { white-space: nowrap; font-weight: 600; }
+  .wa-card .step-label { color: rgba(255,255,255,0.55); }
+  .wa-card .step-label::before { background: var(--cyan); }
+  .wa-card .step-label__num { color: var(--cyan); }
 
-  form.upload-form { padding: 22px clamp(24px,4vw,36px) clamp(28px,4vw,36px); }
-  .field { margin-bottom: 18px; }
-  .field label {
-    display: block; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.08em; text-transform: uppercase;
-    color: var(--graphite); margin-bottom: 7px;
+  /* ================= WHATSAPP CARD (paso 01) ================= */
+  .wa-card {
+    position: relative;
+    background: linear-gradient(155deg, var(--navy) 0%, var(--navy-deep) 100%);
+    color: var(--white);
+    border-radius: 14px;
+    padding: clamp(28px, 4.5vw, 40px);
+    box-shadow: var(--shadow-hero);
+    border: 1px solid rgba(127,184,217,0.18);
+    overflow: hidden;
   }
-  .field label span { text-transform: none; letter-spacing: 0; opacity: 0.75; }
-  .field input[type="text"], .field input[type="email"], .field input[type="tel"], .field textarea {
-    width: 100%; border: 1px solid var(--hairline); background: var(--soft);
-    padding: 12px 14px; font-family: var(--body-font); font-size: 0.96rem; color: var(--ink);
-    border-radius: 4px; transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
-    appearance: none; -webkit-appearance: none;
+  .wa-card::before {
+    content: "";
+    position: absolute; inset: auto -20% -40% auto;
+    width: 280px; height: 280px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(79,163,209,0.18), transparent 70%);
+    pointer-events: none;
   }
-  .field input:hover, .field textarea:hover { border-color: rgba(22,35,63,0.25); }
-  .field input:focus, .field textarea:focus {
-    border-color: var(--cyan); background: var(--white); outline: none;
-    box-shadow: 0 0 0 3px var(--cyan-soft);
+  .wa-card::after {
+    content: "";
+    position: absolute; inset: -30% auto auto -15%;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(225,90,44,0.12), transparent 70%);
+    pointer-events: none;
   }
-  .field textarea { resize: vertical; min-height: 76px; }
-  .field .err { display: none; color: var(--orange-dark); font-size: 0.82rem; margin-top: 6px; }
-  .field.invalid input, .field.invalid textarea, .field.invalid .dropzone { border-color: var(--orange-dark); }
-  .field.invalid .err { display: block; }
+  .wa-card > * { position: relative; z-index: 1; }
+  .wa-card h2 {
+    font-family: var(--display); font-weight: 700;
+    font-size: clamp(1.55rem, 2.8vw, 1.9rem);
+    letter-spacing: -0.03em; line-height: 1.15;
+    margin-bottom: 14px;
+  }
+  .wa-card__text {
+    color: rgba(255,255,255,0.78);
+    font-size: clamp(0.98rem, 1.7vw, 1.08rem);
+    line-height: 1.65;
+    max-width: 40ch;
+    margin-bottom: 28px;
+  }
 
-  /* file field as a clickable label (better a11y than JS-only click handler) */
-  .file-input-hidden {
-    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-    overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  .wa-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 12px;
+    width: 100%;
+    padding: 16px 22px;
+    background: var(--wa); color: var(--white);
+    font-family: var(--display); font-weight: 700; font-size: 1.05rem;
+    text-decoration: none; border-radius: 10px; border: none;
+    box-shadow: 0 10px 28px rgba(37,211,102,0.32);
+    transition: transform 0.2s var(--ease-out), background 0.2s ease, box-shadow 0.2s ease;
   }
-  .dropzone {
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
-    border: 1.5px dashed var(--hairline); border-radius: 4px; background: var(--soft);
-    padding: clamp(32px, 4vw, 36px) 18px; text-align: center; cursor: pointer;
-    transition: border-color 0.2s ease, background 0.2s ease;
+  .wa-btn svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+  .wa-btn:hover {
+    background: var(--wa-dark);
+    transform: translateY(-2px) scale(1.01);
+    box-shadow: 0 14px 36px rgba(37,211,102,0.4);
   }
-  .dropzone:hover { border-color: var(--cyan); background: rgba(79,163,209,0.06); }
-  .file-input-hidden:focus-visible + .dropzone { outline: 2px solid var(--orange); outline-offset: 3px; }
-  .dropzone svg { width: 32px; height: 32px; stroke: var(--navy); flex-shrink: 0; }
-  .dropzone .main-txt { display: block; font-weight: 600; font-size: 0.96rem; line-height: 1.35; }
-  .dropzone .sub-txt { display: block; color: var(--graphite); font-size: 0.82rem; line-height: 1.4; }
-  .file-name {
-    font-family: var(--mono); font-size: 0.76rem; color: var(--navy); margin-top: 8px;
-    word-break: break-all;
-  }
-  .file-name:not(:empty) { padding: 6px 10px; background: var(--cyan-soft); border-radius: 4px; }
+  .wa-btn:active { transform: translateY(0) scale(0.99); }
 
-  .submit-btn {
-    width: 100%; border: none; background: var(--orange); color: var(--white);
-    font-family: var(--display); font-weight: 600; font-size: 1rem;
-    padding: 15px; border-radius: 4px; cursor: pointer;
-    transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
-    box-shadow: 0 8px 20px rgba(225,90,44,0.25);
+  .wa-phone {
+    margin-top: 26px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(255,255,255,0.12);
   }
-  .submit-btn:hover:not(:disabled) { background: var(--orange-dark); transform: translateY(-1px); }
-  .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-
-  .form-msg { margin-top: 16px; padding: 14px 16px; border-radius: 4px; font-size: 0.92rem; display: none; }
-  .form-msg.show { display: block; }
-  .form-msg.success { background: var(--cyan-soft); color: var(--navy); border: 1px solid rgba(79,163,209,0.3); }
-  .form-msg.error { background: rgba(225,90,44,0.08); color: var(--orange-dark); border: 1px solid rgba(225,90,44,0.25); }
-  .validation-summary {
-    margin-bottom: 16px; padding: 12px 16px; border-radius: 4px; font-size: 0.86rem;
-    background: rgba(225,90,44,0.08); color: var(--orange-dark); border: 1px solid rgba(225,90,44,0.25);
-    display: none;
+  .wa-phone__note {
+    font-size: 0.88rem;
+    color: rgba(255,255,255,0.58);
+    line-height: 1.55;
+    margin-bottom: 12px;
   }
-  .validation-summary.show { display: block; }
+  .wa-phone__row {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px;
+  }
+  .wa-phone__number {
+    font-family: var(--display); font-weight: 700;
+    font-size: clamp(1.35rem, 2.6vw, 1.6rem);
+    letter-spacing: -0.02em;
+    color: var(--white);
+    user-select: text;
+    -webkit-user-select: text;
+  }
+  .wa-copy {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--cyan); background: rgba(79,163,209,0.12);
+    border: 1px solid rgba(79,163,209,0.28);
+    border-radius: 6px; padding: 8px 12px; cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+  }
+  .wa-copy svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .wa-copy:hover { background: rgba(79,163,209,0.22); transform: translateY(-1px); }
+  .wa-copy.is-copied {
+    color: var(--wa);
+    border-color: rgba(37,211,102,0.4);
+    background: rgba(37,211,102,0.14);
+  }
 
   /* ================= PROCESS (steps 2-5) ================= */
-  .process { background: var(--white); padding: clamp(20px,4vw,40px) 0 clamp(70px,9vw,100px); }
-  .steps { position: relative; max-width: 760px; }
-  .steps::before {
-    content: ""; position: absolute; left: 23px; top: 6px; bottom: 6px; width: 1px;
-    background: repeating-linear-gradient(to bottom, var(--hairline) 0 6px, transparent 6px 12px);
+  .process {
+    background: var(--soft);
+    padding: clamp(48px, 8vw, 80px) 0 clamp(80px, 11vw, 120px);
   }
-  .step { position: relative; display: flex; gap: 24px; padding-bottom: 46px; }
+  .steps { position: relative; max-width: 720px; }
+  .steps::before {
+    content: ""; position: absolute; left: 23px; top: 8px; bottom: 8px; width: 1px;
+    background: repeating-linear-gradient(to bottom, rgba(22,35,63,0.14) 0 6px, transparent 6px 12px);
+  }
+  .step { position: relative; display: flex; gap: 24px; padding-bottom: 42px; }
   .step:last-child { padding-bottom: 0; }
   .step-icon {
-    flex: 0 0 48px; height: 48px; border-radius: 6px; background: var(--navy);
+    flex: 0 0 48px; height: 48px; border-radius: 10px; background: var(--navy);
     display: flex; align-items: center; justify-content: center; z-index: 1;
+    box-shadow: 0 4px 14px rgba(22,35,63,0.12);
     transition: transform 0.25s var(--ease-out), background 0.25s ease, box-shadow 0.25s ease;
   }
-  .step:hover .step-icon { transform: translateY(-2px); background: var(--navy-deep); box-shadow: 0 8px 18px rgba(22,35,63,0.2); }
-  .step-icon svg { width: 20px; height: 20px; stroke: var(--cyan); }
+  .step:hover .step-icon {
+    transform: translateY(-3px);
+    background: var(--navy-deep);
+    box-shadow: 0 10px 22px rgba(22,35,63,0.22);
+  }
+  .step-icon svg { width: 20px; height: 20px; stroke: var(--cyan); transition: stroke 0.25s ease; }
+  .step:hover .step-icon svg { stroke: #A8D4EB; }
   .step-icon .icon-accent { stroke: var(--orange); }
-  .step-body h3 { font-family: var(--display); font-size: 1.16rem; font-weight: 600; margin-bottom: 8px; }
-  .step-body p { color: var(--graphite); max-width: 52ch; }
-  .step-body a { color: var(--orange-dark); font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+  .step-body {
+    background: var(--white);
+    border: 1px solid var(--hairline);
+    border-radius: 10px;
+    padding: 20px 22px 22px;
+    box-shadow: var(--shadow-card);
+    flex: 1; min-width: 0;
+    transition: box-shadow 0.3s var(--ease-out), transform 0.3s var(--ease-out);
+  }
+  .step:hover .step-body {
+    box-shadow: 0 2px 4px rgba(22,35,63,0.04), 0 20px 44px -14px rgba(22,35,63,0.14);
+    transform: translateY(-1px);
+  }
+  .step-body h3 {
+    font-family: var(--display); font-size: clamp(1.15rem, 2.2vw, 1.28rem);
+    font-weight: 600; letter-spacing: -0.02em; margin-bottom: 8px;
+  }
+  .step-body p { color: var(--graphite); font-size: 0.98rem; line-height: 1.65; max-width: 48ch; }
 
-  /* ================= ADVANTAGES (dark) ================= */
-  .advantages { background: var(--navy-deep); color: var(--white); padding: clamp(72px, 11vw, 120px) 0; }
+  /* ================= ADVANTAGES ================= */
+  .advantages { background: var(--navy-deep); color: var(--white); padding: clamp(80px, 12vw, 128px) 0; }
   .adv-grid { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--hairline-dark); }
   @media (max-width: 800px) { .adv-grid { grid-template-columns: 1fr; } }
-  .adv-item { padding: clamp(40px, 5.5vw, 56px) clamp(24px, 4vw, 48px); border-right: 1px solid var(--hairline-dark); transition: background 0.3s ease; }
-  .adv-item:hover { background: rgba(255,255,255,0.03); }
+  .adv-item {
+    padding: clamp(44px, 6vw, 60px) clamp(24px, 4vw, 48px);
+    border-right: 1px solid var(--hairline-dark);
+    transition: background 0.3s ease;
+  }
+  .adv-item:hover { background: rgba(255,255,255,0.035); }
   .adv-item:last-child { border-right: none; }
   @media (max-width: 800px) {
     .adv-item { border-right: none; border-bottom: 1px solid var(--hairline-dark); }
     .adv-item:last-child { border-bottom: none; }
   }
   .adv-item svg { width: 36px; height: 36px; stroke: var(--cyan); margin-bottom: 22px; }
-  .adv-item .label { font-family: var(--mono); font-size: clamp(0.78rem, 1.5vw, 0.86rem); letter-spacing: 0.1em; text-transform: uppercase; color: var(--cyan); margin-bottom: 14px; }
+  .adv-item .label {
+    font-family: var(--mono); font-size: clamp(0.78rem, 1.5vw, 0.86rem);
+    letter-spacing: 0.1em; text-transform: uppercase; color: var(--cyan); margin-bottom: 14px;
+  }
   .adv-item p { color: rgba(255,255,255,0.78); font-size: clamp(1rem, 1.8vw, 1.1rem); line-height: 1.65; }
 
   /* ================= FOOTER ================= */
-  footer { background: var(--navy-deep); color: var(--white); border-top: 1px solid var(--hairline-dark); padding: 44px 0 26px; }
+  footer { background: var(--navy-deep); color: var(--white); border-top: 1px solid var(--hairline-dark); padding: 52px 0 28px; }
   .footer-grid {
     display: grid; grid-template-columns: auto 1fr 1fr 1fr; gap: clamp(24px,4vw,40px);
-    align-items: start; padding-bottom: 30px; border-bottom: 1px solid var(--hairline-dark);
+    align-items: start; padding-bottom: 32px; border-bottom: 1px solid var(--hairline-dark);
   }
   @media (max-width: 800px) { .footer-grid { grid-template-columns: 1fr; gap: 26px; } }
-  .footer-logo img { height: 40px; }
-  .footer-col .label { font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cyan); margin-bottom: 8px; }
+  .footer-logo img { height: 42px; }
+  .footer-col .label {
+    font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--cyan); margin-bottom: 8px;
+  }
   .footer-col a, .footer-col span { font-size: 0.96rem; color: rgba(255,255,255,0.9); text-decoration: none; }
   .footer-col a:hover { color: var(--cyan); }
   .footer-bottom {
-    padding-top: 20px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;
+    padding-top: 22px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px;
     font-family: var(--mono); font-size: 0.72rem; color: rgba(255,255,255,0.45); letter-spacing: 0.04em;
   }
 </style>
@@ -331,7 +375,7 @@
         <li><a href="#contacto">Contacto</a></li>
       </ul>
     </nav>
-    <a class="btn btn-primary" href="#top">Pedir presupuesto</a>
+    <a class="btn btn-primary" href="#whatsapp">Pedir presupuesto</a>
   </div>
 </header>
 
@@ -345,58 +389,26 @@
         <h1>Tu diseño,<br><span class="accent">impreso en 3D</span></h1>
       </div>
 
-      <div class="form-card reveal reveal--delay-1">
-        <div class="form-card-head">
-          <div class="step-label">Paso <span class="step-label__num">01</span></div>
-          <h2>Sube tu archivo</h2>
-          <p>Sube tu archivo en formato .STL (preferiblemente), .3DM o una captura de pantalla del diseño que quieres imprimir.</p>
-          <p class="form-help">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-            <span><span class="form-help__lead">¿Necesitas ayuda?</span> <a href="tel:+34633586174">Llama</a> o <a href="https://wa.me/34633586174" target="_blank" rel="noopener noreferrer">WhatsApp</a> al <span class="form-help__phone">633 58 61 74</span></span>
-          </p>
+      <div class="wa-card reveal reveal--delay-1" id="whatsapp">
+        <div class="step-label">Paso <span class="step-label__num">01</span></div>
+        <h2>Dinos lo que necesitas</h2>
+        <p class="wa-card__text">Cuéntanos por WhatsApp qué quieres imprimir: envíanos tu archivo, una foto o una descripción. Te respondemos con un presupuesto en horas.</p>
+
+        <a class="wa-btn" href="https://wa.me/34633586174" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          Abrir WhatsApp
+        </a>
+
+        <div class="wa-phone">
+          <p class="wa-phone__note">¿Prefieres guardarlo en tu agenda y escribirnos luego? Aquí tienes nuestro número.</p>
+          <div class="wa-phone__row">
+            <span class="wa-phone__number" id="phoneNumber">633 58 61 74</span>
+            <button type="button" class="wa-copy" id="copyPhone" aria-label="Copiar número de teléfono">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <span id="copyPhoneLabel">Copiar número</span>
+            </button>
+          </div>
         </div>
-        <form class="upload-form" id="uploadForm" autocomplete="off" novalidate>
-          <div class="validation-summary" id="validationSummary" role="alert"></div>
-
-          <div class="field" id="fileField">
-            <label for="archivo">Archivo .STL</label>
-            <input type="file" id="archivo" name="archivo" accept=".stl,.3dm,.jpg,.jpeg,.png" required class="file-input-hidden">
-            <label for="archivo" class="dropzone">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M12 4l-4 4M12 4l4 4"/><path d="M4 16v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
-              <span class="main-txt" id="dzText">Selecciona o arrastra tu archivo</span>
-              <span class="sub-txt">STL, 3DM, JPG o PNG — máximo 10 MB</span>
-            </label>
-            <div class="file-name" id="fileNameShown" aria-live="polite"></div>
-            <div class="err" id="errArchivo">Selecciona un archivo .STL, .3DM, .JPG o .PNG de menos de 10 MB.</div>
-          </div>
-
-          <div class="field" id="nombreField">
-            <label for="nombre">Nombre</label>
-            <input type="text" id="nombre" name="nombre" autocomplete="off" required>
-            <div class="err">Indica tu nombre.</div>
-          </div>
-
-          <div class="field" id="emailField">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" autocomplete="new-password" required>
-            <div class="err">Indica un email válido.</div>
-          </div>
-
-          <div class="field" id="movilField">
-            <label for="movil">Móvil</label>
-            <input type="tel" id="movil" name="movil" autocomplete="new-password" inputmode="numeric" pattern="^[67][0-9]{8}$" required>
-            <div class="err">Indica un móvil válido de 9 dígitos que empiece por 6 o 7.</div>
-          </div>
-
-          <div class="field">
-            <label for="comentarios">Comentarios <span>(opcional)</span></label>
-            <textarea id="comentarios" name="comentarios" autocomplete="off"></textarea>
-          </div>
-
-          <button type="submit" class="submit-btn" id="submitBtn">Enviar archivo</button>
-          <div class="form-msg success" id="formSuccess" role="status" aria-live="polite">Archivo enviado con éxito. Te enviaremos un presupuesto por WhatsApp en las próximas horas.</div>
-          <div class="form-msg error" id="formError" role="alert">Ha habido un problema de conexión. Inténtalo de nuevo o escríbenos por WhatsApp.</div>
-        </form>
       </div>
     </div>
   </div>
@@ -413,18 +425,18 @@
           </div>
         </div>
         <div class="step reveal">
-          <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
+          <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
           <div class="step-body">
             <div class="step-label">Paso <span class="step-label__num">03</span></div>
-            <h3>Confirma</h3>
-            <p>Acepta el presupuesto respondiendo a nuestro WhatsApp o llamándonos al <a href="tel:+34633586174">633 58 61 74</a>.</p>
+            <h3>Aceptas</h3>
+            <p>Confirmas el presupuesto respondiendo a nuestro WhatsApp.</p>
           </div>
         </div>
         <div class="step reveal">
           <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18v-3a6 6 0 0 1 12 0v3"/><rect x="4" y="18" width="4" height="4" rx="1"/><rect x="16" y="18" width="4" height="4" rx="1"/></svg></div>
           <div class="step-body">
             <div class="step-label">Paso <span class="step-label__num">04</span></div>
-            <h3>Lo producimos</h3>
+            <h3>Producción</h3>
             <p>Ponemos la impresora en marcha para tu pieza.</p>
           </div>
         </div>
@@ -514,124 +526,24 @@
     reveals.forEach(function (el) { el.classList.add('is-visible'); });
   }
 
-  var fileInput = document.getElementById('archivo');
-  var dzText = document.getElementById('dzText');
-  var fileNameShown = document.getElementById('fileNameShown');
-
-  fileInput.addEventListener('change', function () {
-    var f = fileInput.files[0];
-    if (f) {
-      dzText.textContent = 'Archivo seleccionado';
-      fileNameShown.textContent = f.name;
-    } else {
-      dzText.textContent = 'Selecciona o arrastra tu archivo';
-      fileNameShown.textContent = '';
-    }
-  });
-
-  var form = document.getElementById('uploadForm');
-  var submitBtn = document.getElementById('submitBtn');
-  var formSuccess = document.getElementById('formSuccess');
-  var formError = document.getElementById('formError');
-  var validationSummary = document.getElementById('validationSummary');
-  var movilInput = document.getElementById('movil');
-  var MAX_SIZE = 10 * 1024 * 1024;
-  var GAS_URL = 'https://script.google.com/macros/s/AKfycbxZOIRrGZ_aTgWo9s5_fGvJmPzAlBlWHEKPKASl0pMv9e02-ARYoMndBzyVxyK7hHC2Lw/exec';
-  var VALID_EXTENSIONS = ['.stl', '.3dm', '.jpg', '.jpeg', '.png'];
-
-  function hasValidExtension(name) {
-    var lower = name.toLowerCase();
-    return VALID_EXTENSIONS.some(function (ext) { return lower.endsWith(ext); });
-  }
-
-  function setInvalid(fieldId, invalid) {
-    var el = document.getElementById(fieldId);
-    if (el) el.classList.toggle('invalid', invalid);
-  }
-
-  function clearAllStates() {
-    ['fileField','nombreField','emailField','movilField'].forEach(function (id) { setInvalid(id, false); });
-    validationSummary.classList.remove('show');
-    validationSummary.textContent = '';
-    formSuccess.classList.remove('show');
-    formError.classList.remove('show');
-  }
-
-  function validate() {
-    var missing = [];
-    var firstInvalid = null;
-
-    var file = fileInput.files[0];
-    var fileOk = file && hasValidExtension(file.name) && file.size <= MAX_SIZE;
-    setInvalid('fileField', !fileOk);
-    if (!fileOk) { missing.push('archivo válido (.STL, .3DM, .JPG o .PNG, máx. 10 MB)'); firstInvalid = firstInvalid || document.getElementById('fileField'); }
-
-    var nombre = document.getElementById('nombre').value.trim();
-    setInvalid('nombreField', !nombre);
-    if (!nombre) { missing.push('nombre'); firstInvalid = firstInvalid || document.getElementById('nombreField'); }
-
-    var email = document.getElementById('email').value.trim();
-    var emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-    setInvalid('emailField', !emailOk);
-    if (!emailOk) { missing.push('email válido'); firstInvalid = firstInvalid || document.getElementById('emailField'); }
-
-    var movil = movilInput.value.trim();
-    var movilOk = /^[67][0-9]{8}$/.test(movil);
-    setInvalid('movilField', !movilOk);
-    if (!movilOk) { missing.push('móvil válido (9 dígitos, empieza por 6 o 7)'); firstInvalid = firstInvalid || document.getElementById('movilField'); }
-
-    if (missing.length) {
-      validationSummary.textContent = missing.length === 1
-        ? 'Falta completar: ' + missing[0] + '.'
-        : 'Faltan por completar: ' + missing.join(', ') + '.';
-      validationSummary.classList.add('show');
-      if (firstInvalid) firstInvalid.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'center' });
-      return false;
-    }
-    return true;
-  }
-
-  function fileToBase64(file) {
-    return new Promise(function (resolve, reject) {
-      var reader = new FileReader();
-      reader.onload = function () { resolve(reader.result); };
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
+  var copyBtn = document.getElementById('copyPhone');
+  var copyLabel = document.getElementById('copyPhoneLabel');
+  if (copyBtn && copyLabel) {
+    var copyTimer = null;
+    copyBtn.addEventListener('click', function () {
+      var number = '633586174';
+      copyBtn.classList.add('is-copied');
+      copyLabel.textContent = '¡Copiado!';
+      if (copyTimer) clearTimeout(copyTimer);
+      copyTimer = setTimeout(function () {
+        copyBtn.classList.remove('is-copied');
+        copyLabel.textContent = 'Copiar número';
+      }, 1600);
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(number).catch(function () {});
+      }
     });
   }
-
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    clearAllStates();
-    if (!validate()) return;
-
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Enviando…';
-    var file = fileInput.files[0];
-
-    fileToBase64(file).then(function (base64) {
-      var fd = new FormData();
-      fd.append('nombre', document.getElementById('nombre').value.trim());
-      fd.append('email', document.getElementById('email').value.trim());
-      fd.append('movil', movilInput.value.trim());
-      fd.append('comentarios', document.getElementById('comentarios').value.trim());
-      fd.append('archivo_nombre', file.name);
-      fd.append('archivo_base64', base64);
-      return fetch(GAS_URL, { method: 'POST', mode: 'no-cors', body: fd });
-    }).then(function () {
-      form.reset();
-      dzText.textContent = 'Selecciona o arrastra tu archivo';
-      fileNameShown.textContent = '';
-      formSuccess.classList.add('show');
-      formSuccess.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'nearest' });
-    }).catch(function () {
-      formError.classList.add('show');
-      formError.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'nearest' });
-    }).finally(function () {
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Enviar archivo';
-    });
-  });
 })();
 
 (function () {
